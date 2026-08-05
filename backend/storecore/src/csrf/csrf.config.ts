@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import { randomBytes } from 'crypto';
 
 const CSRF_TOKEN_NAME = 'csrfToken';
 
@@ -12,7 +12,7 @@ function generateToken(req: any) {
     return existing;
   }
 
-  const token = crypto.randomBytes(32).toString('hex');
+  const token = randomBytes(32).toString('hex');
   req.session ??= {};
   req.session[CSRF_TOKEN_NAME] = token;
   return token;
