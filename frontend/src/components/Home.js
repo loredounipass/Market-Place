@@ -1,300 +1,11 @@
 "use client"
 
 import { useContext, useState, useEffect } from "react"
-import { styled } from "@mui/material/styles"
-import {
-  AppBar as MuiAppBar,
-  Toolbar,
-  Box,
-  Typography,
-  IconButton,
-  Link,
-  MenuItem,
-  Menu,
-  Avatar,
-  Tooltip,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Button,
-  Snackbar,
-  Alert,
-  useMediaQuery,
-  useTheme,
-  Grid,
-  TextField,
-  InputAdornment,
-  Card,
-  CardContent,
-  Chip,
-  Fade,
-} from "@mui/material"
-import { useNavigate } from "react-router-dom"
-import {
-  Menu as MenuIcon,
-  ExitToApp as LogoutIcon,
-  Settings as SettingsIcon,
-  Search as SearchIcon,
-  ShoppingBag as ShoppingBagIcon,
-  MoreVert as MoreVertIcon,
-  AddShoppingCart as AddShoppingCartIcon,
-  ShoppingCart as ShoppingCartIcon,
-  ContactMail as ContactMailIcon,
-  RemoveShoppingCart as RemoveShoppingCartIcon,
-} from "@mui/icons-material"
+import { Link, useNavigate } from "react-router-dom"
 import CartDrawer from "./Cart"
 import useAuth from "../hooks/useAuth"
 import { AuthContext } from "../hooks/AuthContext"
 import useProducts from "../hooks/useProducts"
-
-const drawerWidth = 280
-
-const AppBar = styled(MuiAppBar)(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  background: "linear-gradient(135deg, #2E7D32 0%, #4CAF50 50%, #66BB6A 100%)",
-  boxShadow: "0 8px 32px rgba(76, 175, 80, 0.4)",
-  backdropFilter: "blur(20px)",
-  border: "1px solid rgba(255, 255, 255, 0.1)",
-  transition: theme.transitions.create(["width", "margin", "box-shadow"], {
-    easing: theme.transitions.easing.easeInOut,
-    duration: theme.transitions.duration.standard,
-  }),
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
-    zIndex: -1,
-  },
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}))
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-  borderRadius: 20,
-  overflow: "hidden",
-  transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-  border: "1px solid rgba(76, 175, 80, 0.1)",
-  background: "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)",
-  backdropFilter: "blur(20px)",
-  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(76, 175, 80, 0.1)",
-  position: "relative",
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 3,
-    background: "linear-gradient(90deg, #2E7D32 0%, #4CAF50 50%, #66BB6A 100%)",
-    opacity: 0,
-    transition: "opacity 0.3s ease",
-  },
-  "&:hover": {
-    transform: "translateY(-12px) scale(1.02)",
-    boxShadow: "0 20px 60px rgba(76, 175, 80, 0.2), 0 8px 24px rgba(46, 125, 50, 0.15)",
-    borderColor: "rgba(76, 175, 80, 0.3)",
-    "&::before": {
-      opacity: 1,
-    },
-  },
-}))
-
-const CategoryButton = styled(Button)(({ theme, selected }) => ({
-  borderRadius: 30,
-  padding: "12px 28px",
-  fontWeight: 700,
-  fontSize: "0.95rem",
-  textTransform: "none",
-  transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-  border: selected ? "none" : "2px solid rgba(76, 175, 80, 0.2)",
-  background: selected 
-    ? "linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)" 
-    : "rgba(255, 255, 255, 0.95)",
-  color: selected ? "white" : "#2E7D32",
-  backdropFilter: "blur(20px)",
-  position: "relative",
-  overflow: "hidden",
-  boxShadow: selected 
-    ? "0 8px 25px rgba(76, 175, 80, 0.3)" 
-    : "0 4px 15px rgba(0, 0, 0, 0.05)",
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    top: 0,
-    left: "-100%",
-    width: "100%",
-    height: "100%",
-    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-    transition: "left 0.6s ease",
-  },
-  "&:hover": {
-    transform: "translateY(-3px) scale(1.05)",
-    boxShadow: selected 
-      ? "0 12px 40px rgba(76, 175, 80, 0.4)" 
-      : "0 8px 25px rgba(76, 175, 80, 0.2)",
-    background: selected 
-      ? "linear-gradient(135deg, #388E3C 0%, #4CAF50 100%)" 
-      : "rgba(76, 175, 80, 0.1)",
-    "&::before": {
-      left: "100%",
-    },
-  },
-}))
-
-const SearchField = styled(TextField)(({ theme }) => ({
-  "& .MuiOutlinedInput-root": {
-    borderRadius: 25,
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    backdropFilter: "blur(20px)",
-    border: "2px solid rgba(76, 175, 80, 0.1)",
-    transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-    overflow: "hidden",
-    position: "relative",
-    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.05)",
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: "linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(46, 125, 50, 0.05) 100%)",
-      opacity: 0,
-      transition: "opacity 0.3s ease",
-    },
-    "&:hover": {
-      backgroundColor: "white",
-      borderColor: "rgba(76, 175, 80, 0.3)",
-      boxShadow: "0 8px 25px rgba(76, 175, 80, 0.15)",
-      transform: "translateY(-2px)",
-      "&::before": {
-        opacity: 1,
-      },
-    },
-    "&.Mui-focused": {
-      backgroundColor: "white",
-      borderColor: "#4CAF50",
-      boxShadow: "0 12px 40px rgba(76, 175, 80, 0.25)",
-      transform: "translateY(-2px)",
-      "&::before": {
-        opacity: 1,
-      },
-    },
-  },
-  "& .MuiInputLabel-root.Mui-focused": {
-    color: "#4CAF50",
-    fontWeight: 600,
-  },
-}))
-
-const PaginationButton = styled(Button)(({ theme, active }) => ({
-  minWidth: 48,
-  height: 48,
-  borderRadius: 16,
-  margin: "0 6px",
-  fontWeight: 700,
-  transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-  background: active 
-    ? "linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)" 
-    : "rgba(255, 255, 255, 0.95)",
-  color: active ? "white" : "#2E7D32",
-  border: active ? "none" : "2px solid rgba(76, 175, 80, 0.2)",
-  backdropFilter: "blur(20px)",
-  boxShadow: active 
-    ? "0 8px 25px rgba(76, 175, 80, 0.3)" 
-    : "0 4px 15px rgba(0, 0, 0, 0.05)",
-  position: "relative",
-  overflow: "hidden",
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: "0%",
-    height: "0%",
-    background: "rgba(255, 255, 255, 0.2)",
-    borderRadius: "50%",
-    transform: "translate(-50%, -50%)",
-    transition: "all 0.4s ease",
-  },
-  "&:hover": {
-    transform: "translateY(-3px) scale(1.1)",
-    boxShadow: active 
-      ? "0 12px 40px rgba(76, 175, 80, 0.4)" 
-      : "0 8px 25px rgba(76, 175, 80, 0.2)",
-    "&::before": {
-      width: "100%",
-      height: "100%",
-    },
-  },
-  "&:disabled": {
-    opacity: 0.4,
-    transform: "none",
-    "&:hover": {
-      transform: "none",
-    },
-  },
-}))
-
-const AnimatedChip = styled(Chip)(({ theme }) => ({
-  background: "linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)",
-  color: "white",
-  fontWeight: 700,
-  fontSize: "1.1rem",
-  height: 40,
-  borderRadius: 20,
-  transition: "all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-  boxShadow: "0 4px 15px rgba(76, 175, 80, 0.3)",
-  "&:hover": {
-    transform: "scale(1.05)",
-    boxShadow: "0 6px 20px rgba(76, 175, 80, 0.4)",
-  },
-}))
-
-const ModernButton = styled(Button)(({ theme }) => ({
-  background: "linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%)",
-  borderRadius: 16,
-  fontWeight: 700,
-  textTransform: "none",
-  padding: "10px 24px",
-  transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-  boxShadow: "0 4px 15px rgba(46, 125, 50, 0.3)",
-  position: "relative",
-  overflow: "hidden",
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    top: 0,
-    left: "-100%",
-    width: "100%",
-    height: "100%",
-    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
-    transition: "left 0.6s ease",
-  },
-  "&:hover": {
-    background: "linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%)",
-    transform: "translateY(-2px) scale(1.02)",
-    boxShadow: "0 8px 25px rgba(46, 125, 50, 0.4)",
-    "&::before": {
-      left: "100%",
-    },
-  },
-}))
 
 function DashboardContent() {
   const { auth } = useContext(AuthContext)
@@ -302,16 +13,19 @@ function DashboardContent() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { logoutUser } = useAuth()
   const navigate = useNavigate()
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"))
   const { products, loading, error } = useProducts()
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [primaryCategory, setPrimaryCategory] = useState({ value: "all", label: "Todos" })
   const [anchorOverflow, setAnchorOverflow] = useState(null)
   const [cartOpen, setCartOpen] = useState(false)
   const [cartItems, setCartItems] = useState([])
+  const [searchKeyword, setSearchKeyword] = useState("")
+  const [submittedKeyword, setSubmittedKeyword] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
+  const [toastSeverity, setToastSeverity] = useState("success")
 
-  // Persist cart in localStorage
   useEffect(() => {
     try {
       const raw = localStorage.getItem("cartItems")
@@ -331,21 +45,17 @@ function DashboardContent() {
       console.warn("Failed to save cart to localStorage", e)
     }
   }, [cartItems])
-  const [searchKeyword, setSearchKeyword] = useState("")
-  const [submittedKeyword, setSubmittedKeyword] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
 
   const handleCloseUserMenu = () => setAnchorElUser(null)
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget)
 
-  const handleClickUserMenu = async (e) => {
+  const handleClickUserMenu = async (e, action) => {
     e.stopPropagation()
-    const action = e.target.innerHTML
-    if (action === "Logout") {
+    if (action === "logout") {
       await logoutUser()
       window.location.reload()
-    } else if (action === "Settings") {
-      history.push("/settings")
+    } else if (action === "settings") {
+      navigate("/settings")
     }
     setAnchorElUser(null)
     setDrawerOpen(false)
@@ -355,11 +65,6 @@ function DashboardContent() {
 
   const handleOpenCart = () => setCartOpen(true)
   const handleCloseCart = () => setCartOpen(false)
-
-  // Toast for add-to-cart feedback
-  const [toastOpen, setToastOpen] = useState(false)
-  const [toastMessage, setToastMessage] = useState("")
-  const [toastSeverity, setToastSeverity] = useState("success")
 
   const showToast = (message, severity = "success") => {
     setToastMessage(message)
@@ -381,7 +86,6 @@ function DashboardContent() {
       }
       return [...prev, { ...product, qty: 1 }]
     })
-    // show success toast instead of opening the cart drawer
     showToast("Se ha agregado con éxito", "success")
   }
 
@@ -425,8 +129,7 @@ function DashboardContent() {
     setCurrentPage(1)
   }
 
-  const filteredProducts =
-    selectedCategory === "all" ? products : products.filter((product) => product.category === selectedCategory)
+  const filteredProducts = selectedCategory === "all" ? products : products.filter((product) => product.category === selectedCategory)
 
   const searchFilteredProducts = filteredProducts.filter((product) => {
     const key = submittedKeyword.toLowerCase()
@@ -445,692 +148,440 @@ function DashboardContent() {
   if (!auth) return null
 
   const settings = [
-    { label: `Hi, ${auth.firstName}`, icon: null },
-    { label: "Settings", icon: <SettingsIcon sx={{ mr: 1 }} /> },
-    { label: "Logout", icon: <LogoutIcon sx={{ mr: 1 }} /> },
+    { label: "Settings", action: "settings" },
+    { label: "Logout", action: "logout" },
   ]
 
   const navItems = [
-    { href: "/create", label: "Vender productos", icon: <AddShoppingCartIcon sx={{ mr: 1 }} /> },
-    { href: "/contactanos", label: "Contáctanos", icon: <ContactMailIcon sx={{ mr: 1 }} /> },
-    // Replace the text 'Ubicaciones' with a cart icon; no functionality for now
-    { href: "/ubicaciones", label: "", icon: <ShoppingCartIcon sx={{ fontSize: 28 }} />, isCart: true },
+    { href: "/create", label: "Vender productos" },
+    { href: "/contactanos", label: "Contáctanos" },
+    { href: "/ubicaciones", label: "Carrito", isCart: true },
   ]
 
   const categories = [
-    { value: "all", label: "Todos", icon: "🏪" },
-    { value: "electronics", label: "Electrónicos", icon: "📱" },
-    { value: "clothes", label: "Ropa", icon: "👕" },
-    { value: "vehicles", label: "Vehículos", icon: "🚗" },
-    { value: "medicina", label: "Medicina", icon: "💊" },
-    { value: "comida", label: "Comida", icon: "🍲" },
+    { value: "all", label: "Todos" },
+    { value: "electronics", label: "Electrónicos" },
+    { value: "clothes", label: "Ropa" },
+    { value: "vehicles", label: "Vehículos" },
+    { value: "medicina", label: "Medicina" },
+    { value: "comida", label: "Comida" },
   ]
 
+  const cartIcon = (
+    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+    </svg>
+  )
+
   const renderNavLinks = () => (
-    <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center", gap: 1 }}>
-      {navItems.map(({ href, label, icon, isCart }) => (
+    <nav className="hidden lg:flex items-center gap-2">
+      {navItems.map(({ href, label, isCart }) => (
         isCart ? (
-          <Box key={href} sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
-            <IconButton sx={{ color: 'white' }} aria-label="Carrito" onClick={handleOpenCart}>
-              {icon}
-            </IconButton>
-          </Box>
+          <button
+            key={href}
+            onClick={handleOpenCart}
+            className="text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
+            aria-label="Carrito"
+          >
+            {cartIcon}
+          </button>
         ) : (
           <Link
             key={label}
-            href={href}
-            sx={{
-              textDecoration: "none",
-              color: "white",
-              px: 3,
-              py: 1.5,
-              borderRadius: 3,
-              transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-              position: "relative",
-              overflow: "hidden",
-              "&::before": {
-                content: '""',
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: "rgba(255, 255, 255, 0.1)",
-                borderRadius: 3,
-                transform: "scaleX(0)",
-                transformOrigin: "left",
-                transition: "transform 0.3s ease",
-              },
-              "&:hover": {
-                transform: "translateY(-2px)",
-                "&::before": {
-                  transform: "scaleX(1)",
-                },
-              },
-            }}
+            to={href}
+            className="text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm relative overflow-hidden"
           >
-            <Typography variant="body1" sx={{ fontWeight: 600, fontSize: "0.95rem", position: "relative", zIndex: 1, display: 'flex', alignItems: 'center' }}>
-              {icon}
-              {label}
-            </Typography>
+            {label}
           </Link>
         )
       ))}
-    </Box>
+    </nav>
   )
 
   return (
     <>
-      <AppBar position="absolute">
-        <Toolbar
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            pr: "24px",
-            minHeight: 75,
-          }}
-        >
-          {isMobile && (
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              onClick={() => setDrawerOpen(true)}
-              sx={{ 
-                position: "absolute", 
-                left: 16,
-                transition: "transform 0.3s ease",
-                "&:hover": {
-                  transform: "scale(1.1) rotate(90deg)",
-                },
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-green-800 via-green-600 to-green-400 shadow-lg shadow-green-500/30 border-b border-white/10">
+        <div className="flex items-center justify-between h-18 px-6">
+          <button
+            className="lg:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+            onClick={() => setDrawerOpen(true)}
+            aria-label="menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
 
-          <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center", ml: 3 }}>
-            <Link href="/" sx={{ display: "flex", alignItems: "center", textDecoration: "none", color: "inherit" }}>
-              <Box
-                sx={{
-                  m: 1,
-                  width: 60,
-                  height: 60,
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.9) 100%)",
-                  border: "3px solid rgba(255, 255, 255, 0.3)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 8px 25px rgba(0, 0, 0, 0.15)",
-                  transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-                  position: "relative",
-                  overflow: "hidden",
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    width: "0%",
-                    height: "0%",
-                    background: "rgba(76, 175, 80, 0.1)",
-                    borderRadius: "50%",
-                    transform: "translate(-50%, -50%)",
-                    transition: "all 0.4s ease",
-                  },
-                  "&:hover": {
-                    transform: "scale(1.15) rotate(10deg)",
-                    boxShadow: "0 12px 35px rgba(76, 175, 80, 0.3)",
-                    "&::before": {
-                      width: "100%",
-                      height: "100%",
-                    },
-                  },
-                }}
-              >
-                <ShoppingBagIcon sx={{ color: "#4CAF50", fontSize: 32, zIndex: 1 }} />
-              </Box>
-              <Typography
-                variant="h5"
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "white",
-                  ml: 2,
-                  fontWeight: 800,
-                  letterSpacing: "0.5px",
-                  textShadow: "0 2px 10px rgba(0,0,0,0.2)",
-                }}
-              >
-                Silk Road
-              </Typography>
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center text-decoration-none text-white">
+              <div className="m-2 w-15 h-15 rounded-full bg-gradient-to-br from-white to-gray-100 border-3 border-white/30 flex items-center justify-center shadow-lg shadow-green-500/20 transition-all duration-300 hover:scale-110 hover:rotate-6 hover:shadow-xl hover:shadow-green-500/30">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <h1 className="ml-3 text-2xl font-bold tracking-wide text-shadow-lg">Silk Road</h1>
             </Link>
-          </Box>
+          </div>
 
-          {!isMobile && renderNavLinks()}
+          {renderNavLinks()}
 
-          <Box>
-            <Tooltip title="Configuración de usuario">
-              <IconButton
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleOpenUserMenu(e)
-                }}
-                sx={{ p: 0 }}
-              >
-                <Avatar
-                  sx={{
-                    background: `linear-gradient(135deg, ${getAvatarColor(auth.firstName)} 0%, ${getAvatarColor(auth.firstName)}CC 100%)`,
-                    width: 46,
-                    height: 46,
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    color: "#fff",
-                    border: "3px solid rgba(255, 255, 255, 0.3)",
-                    transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-                    boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-                    "&:hover": {
-                      transform: "scale(1.15)",
-                      boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
-                    },
-                  }}
-                >
-                  {auth.firstName.charAt(0)}
-                </Avatar>
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              anchorEl={anchorElUser}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-              PaperProps={{
-                sx: {
-                  borderRadius: 4,
-                  background: "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)",
-                  backdropFilter: "blur(20px)",
-                  boxShadow: "0 12px 40px rgba(0, 0, 0, 0.15)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                },
-              }}
+          <div className="relative">
+            <button
+              onClick={handleOpenUserMenu}
+              className="p-0"
+              aria-label="Configuración de usuario"
             >
-              {settings.map(({ label, icon }) => (
-                <MenuItem
-                  key={label}
-                  onClick={handleClickUserMenu}
-                  sx={{
-                    py: 2,
-                    px: 3,
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      backgroundColor: "rgba(76, 175, 80, 0.1)",
-                      transform: "translateX(5px)",
-                    },
-                  }}
-                >
-                  {icon}
-                  <Typography textAlign="center" sx={{ fontWeight: 600 }}>
-                    {label}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </AppBar>
+              <div
+                className="w-11 h-11 rounded-full font-bold text-white border-3 border-white/30 flex items-center justify-center shadow-lg shadow-black/20 transition-all duration-300 hover:scale-115 hover:shadow-xl hover:shadow-black/30"
+                style={{ background: `linear-gradient(135deg, ${getAvatarColor(auth.firstName)} 0%, ${getAvatarColor(auth.firstName)}CC 100%)` }}
+              >
+                {auth.firstName.charAt(0)}
+              </div>
+            </button>
 
-      {/* Carrito Drawer */}
+            {anchorElUser && (
+              <div
+                className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50 animate-fadeIn"
+                role="menu"
+              >
+                <div className="px-4 py-3 border-b border-gray-200">
+                  <p className="font-medium text-gray-900 text-center">Hi, {auth.firstName}</p>
+                </div>
+                {settings.map(({ label, action }) => (
+                  <button
+                    key={label}
+                    onClick={(e) => handleClickUserMenu(e, action)}
+                    className="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors font-medium"
+                    role="menuitem"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
       <CartDrawer open={cartOpen} onClose={handleCloseCart} items={cartItems} onRemove={handleRemoveFromCart} onUpdateQty={handleUpdateQty} />
 
-      <Snackbar open={toastOpen} autoHideDuration={3000} onClose={handleCloseToast} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-        <Alert onClose={handleCloseToast} severity={toastSeverity} sx={{ width: '100%' }}>
-          {toastMessage}
-        </Alert>
-      </Snackbar>
+      <div className="fixed bottom-6 right-6 z-50 animate-slideUp" role="alert">
+        {toastOpen && (
+          <div
+            className={`flex items-center px-6 py-4 rounded-xl shadow-2xl border transition-all duration-300 ${toastSeverity === "success"
+                ? "bg-green-600 text-white border-green-500"
+                : "bg-yellow-600 text-white border-yellow-500"
+              }`}
+          >
+            <span className="font-medium">{toastMessage}</span>
+            <button
+              onClick={handleCloseToast}
+              className="ml-4 text-white/80 hover:text-white transition-opacity"
+              aria-label="Cerrar"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
+      </div>
 
-      {isMobile && (
-        <Drawer
-          anchor="left"
-          open={drawerOpen}
-          onClose={() => setDrawerOpen(false)}
-          sx={{
-            "& .MuiDrawer-paper": {
-              background: "linear-gradient(180deg, #2E7D32 0%, #4CAF50 100%)",
-              color: "white",
-              width: drawerWidth,
-              backdropFilter: "blur(20px)",
-            },
-          }}
-        >
-          <Box sx={{ width: drawerWidth, paddingTop: 10 }} role="presentation">
-            <List>
-              {navItems.map(({ href, label }) => (
-                <ListItem
-                  button
-                  component={Link}
-                  key={label}
-                  href={href}
-                  sx={{
-                    py: 2,
-                    mx: 2,
-                    borderRadius: 3,
-                    mb: 1,
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                      transform: "translateX(10px)",
-                    },
-                  }}
-                  onClick={() => setDrawerOpen(false)}
-                >
-                  <ListItemText primary={label} sx={{ color: "white" }} />
-                </ListItem>
-              ))}
-              <Divider sx={{ my: 2, backgroundColor: "rgba(255, 255, 255, 0.2)" }} />
-              {settings.map(({ label, icon }) => (
-                <ListItem
-                  button
-                  key={label}
-                  onClick={handleClickUserMenu}
-                  sx={{
-                    py: 2,
-                    mx: 2,
-                    borderRadius: 3,
-                    mb: 1,
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                      transform: "translateX(10px)",
-                    },
-                  }}
-                >
-                  {icon}
-                  <ListItemText primary={label} sx={{ color: "white" }} />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Drawer>
+      {drawerOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div className="fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-green-800 to-green-600 text-white shadow-xl transform transition-transform" style={{ transform: 'translateX(0)' }}>
+            <div className="pt-10">
+              <nav>
+                {navItems.map(({ href, label }) => (
+                  <Link
+                    key={label}
+                    to={href}
+                    onClick={() => setDrawerOpen(false)}
+                    className="block px-6 py-3 mx-4 rounded-lg mb-2 hover:bg-white/10 transition-colors font-medium"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </div>
+          <div className="fixed inset-0 bg-black/50" onClick={() => setDrawerOpen(false)} aria-hidden="true" />
+        </div>
       )}
 
-      {/* Header Section - Mejorado con efectos */}
-      <Box sx={{ 
-        marginTop: { xs: 6, md: 8 },
-        py: 3, 
-        textAlign: "center",
-        background: "transparent",
-        position: "relative",
-      }}>
-        <Typography
-          variant="h3"
-          sx={{
-            mb: 2,
-            background: "linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%)",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            fontWeight: 900,
-            letterSpacing: "-1px",
-            textShadow: "0 4px 8px rgba(76, 175, 80, 0.1)",
-            animation: "fadeInUp 0.8s ease-out",
-          }}
-        >
-          Catálogo de Productos
-        </Typography>
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            color: "rgba(0,0,0,0.7)", 
-            fontWeight: 500,
-            letterSpacing: "0.5px",
-            animation: "fadeInUp 0.8s ease-out 0.2s both",
-          }}
-        >
-          Encuentra el producto que buscas en nuestra cuidada selección
-        </Typography>
-      </Box>
+      <main className="pt-20 lg:pt-24 animate-fadeIn">
+        <section className="py-8 px-4 text-center" aria-labelledby="catalog-title">
+          <h2 id="catalog-title" className="mb-3 text-4xl font-black bg-gradient-to-r from-green-800 to-green-600 bg-clip-text text-transparent animate-fadeInUp">
+            Catálogo de Productos
+          </h2>
+          <p className="text-xl text-gray-600 font-medium animate-fadeInUp delay-100">
+            Encuentra el producto que buscas en nuestra cuidada selección
+          </p>
+        </section>
 
-      {/* Search Section - Mejorado */}
-      <Box sx={{ 
-        px: { xs: 2, sm: 4, md: 6 }, 
-        mb: 3,
-        animation: "fadeInUp 0.8s ease-out 0.3s both",
-      }}>
-            <SearchField
-              placeholder="Buscar productos..."
-              variant="outlined"
-              value={searchKeyword}
-              onChange={handleKeywordChange}
-              fullWidth
-              sx={{ display: 'block', maxWidth: 700, mx: 'auto' }}
-              InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon sx={{ color: "#4CAF50" }} />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <ModernButton
-                  variant="contained"
-                  onClick={handleSearch}
-                  sx={{ px: 4 }}
-                >
-                  Buscar
-                </ModernButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Box>
+        <section className="px-4 sm:px-6 lg:px-8 mb-8 animate-fadeInUp delay-200 flex-shrink-0" aria-labelledby="search-title">
+          <div className="max-w-3xl mx-auto">
+            <div className="relative">
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Buscar productos..."
+                value={searchKeyword}
+                onChange={handleKeywordChange}
+                className="w-full pl-12 pr-24 py-4 bg-white/95 backdrop-blur-xl border-2 border-green-200 rounded-2xl shadow-lg shadow-green-500/10 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/20 focus:bg-white focus:shadow-xl focus:shadow-green-500/20 transition-all duration-300 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20"
+                aria-label="Buscar productos"
+              />
+              <button
+                onClick={handleSearch}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-green-800 to-green-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-green-500/30 hover:from-green-900 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 transition-all duration-300 hover:scale-105"
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+        </section>
 
-      {/* Categories Section - Mejorado */}
-      <Box sx={{ 
-        px: { xs: 2, sm: 4, md: 6 }, 
-        mb: 3,
-        animation: "fadeInUp 0.8s ease-out 0.45s both",
-      }}>
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            mb: 4, 
-            fontWeight: 700, 
-            color: "#2E7D32", 
-            textAlign: "center",
-            letterSpacing: "0.5px",
-          }}
-        >
-          Categorías
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "nowrap", gap: 2, justifyContent: "center", alignItems: "center" }}>
-          {/* Build visible categories: primary (which starts as Todos) + two more (excluding primary) */}
-          {(() => {
-            // If nothing is selected (selectedCategory === 'all'), show Todos as primary
-            const currentPrimary = selectedCategory === 'all' ? { value: 'all', label: 'Todos' } : primaryCategory
-            const visibleRest = categories.filter(c => c.value !== currentPrimary.value && c.value !== 'all').slice(0, 2)
-            const overflow = categories.filter(c => c.value !== currentPrimary.value && c.value !== 'all' && !visibleRest.some(v => v.value === c.value))
-            const items = [ currentPrimary, ...visibleRest ]
-            return (
-              <>
-                {items.map(({ value, label }, index) => (
-                  <Box key={value} sx={{ animation: `fadeInUp 0.6s ease-out ${0.8 + index * 0.1}s both` }}>
-                    <CategoryButton
-                      selected={selectedCategory === value}
+        <section className="px-4 sm:px-6 lg:px-8 mb-8 animate-fadeInUp delay-300 flex-shrink-0" aria-labelledby="categories-title">
+          <h3 id="categories-title" className="mb-6 text-2xl font-bold text-green-900 text-center">Categorías</h3>
+          <div className="flex flex-wrap justify-center gap-3">
+            {(() => {
+              const currentPrimary = selectedCategory === 'all' ? { value: 'all', label: 'Todos' } : primaryCategory
+              const visibleRest = categories.filter(c => c.value !== currentPrimary.value && c.value !== 'all').slice(0, 2)
+              const overflow = categories.filter(c => c.value !== currentPrimary.value && c.value !== 'all' && !visibleRest.some(v => v.value === c.value))
+              const items = [currentPrimary, ...visibleRest]
+              return (
+                <>
+                  {items.map(({ value, label }, index) => (
+                    <button
+                      key={value}
                       onClick={() => handleCategoryChange(value)}
+                      className={`px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 shadow-lg ${selectedCategory === value
+                          ? "bg-gradient-to-r from-green-600 to-green-400 text-white shadow-green-500/40 scale-105"
+                          : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
+                        }`}
                     >
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                        <Typography sx={{ fontSize: "1.2rem" }}>{index === 0 ? '🏪' : ''}</Typography>
-                        {label}
-                      </Box>
-                    </CategoryButton>
-                  </Box>
-                ))}
-
-                {/* Three-dot overflow menu placed at the end */}
-                {overflow.length > 0 && (
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton
-                      aria-label="Más categorías"
-                      onClick={(e) => setAnchorOverflow(e.currentTarget)}
-                      sx={{ ml: 1, color: '#2E7D32' }}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      anchorEl={anchorOverflow}
-                      open={Boolean(anchorOverflow)}
-                      onClose={() => setAnchorOverflow(null)}
-                      PaperProps={{ sx: { borderRadius: 2 } }}
-                    >
-                      {/* Add an option to reset to Todos */}
-                      <MenuItem
-                        key="reset-all"
-                        onClick={() => {
-                          setPrimaryCategory({ value: 'all', label: 'Todos' })
-                          setSelectedCategory('all')
-                          setAnchorOverflow(null)
-                        }}
+                      {label}
+                    </button>
+                  ))}
+                  {overflow.length > 0 && (
+                    <div className="relative">
+                      <button
+                        onClick={(e) => setAnchorOverflow(e.currentTarget)}
+                        className="px-4 py-3 rounded-full bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+                        aria-label="Más categorías"
                       >
-                        <Typography sx={{ fontWeight: 700 }}>Mostrar Todos</Typography>
-                      </MenuItem>
-                      <Divider />
-                      {overflow.map((cat) => (
-                        <MenuItem
-                          key={cat.value}
-                          onClick={() => {
-                            setPrimaryCategory({ value: cat.value, label: cat.label })
-                            setSelectedCategory(cat.value)
-                            setAnchorOverflow(null)
-                          }}
-                        >
-                          <Typography sx={{ fontWeight: 700 }}>{cat.label}</Typography>
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                  </Box>
-                )}
-              </>
-            )
-          })()}
-        </Box>
-      </Box>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                        </svg>
+                      </button>
+                      {anchorOverflow && (
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50 animate-fadeIn">
+                          <button
+                            onClick={() => {
+                              setPrimaryCategory({ value: 'all', label: 'Todos' })
+                              setSelectedCategory('all')
+                              setAnchorOverflow(null)
+                            }}
+                            className="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors font-bold"
+                          >
+                            Mostrar Todos
+                          </button>
+                          <hr className="my-2 border-gray-200" />
+                          {overflow.map((cat) => (
+                            <button
+                              key={cat.value}
+                              onClick={() => {
+                                setPrimaryCategory({ value: cat.value, label: cat.label })
+                                setSelectedCategory(cat.value)
+                                setAnchorOverflow(null)
+                              }}
+                              className="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors font-bold"
+                            >
+                              {cat.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )
+            })()}
+          </div>
+        </section>
 
-      {/* Products Grid - Mejorado */}
-      <Box sx={{ 
-        px: { xs: 2, sm: 4, md: 6 }, 
-        height: "calc(100vh - 280px)", 
-        overflow: "auto",
-        background: "transparent",
-        "&::-webkit-scrollbar": {
-          width: 8,
-        },
-        "&::-webkit-scrollbar-track": {
-          background: "rgba(0,0,0,0.05)",
-          borderRadius: 4,
-        },
-        "&::-webkit-scrollbar-thumb": {
-          background: "linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)",
-          borderRadius: 4,
-          "&:hover": {
-            background: "linear-gradient(135deg, #388E3C 0%, #4CAF50 100%)",
-          },
-        },
-      }}>
-        {loading ? (
-          <Box sx={{ p: 8, textAlign: "center" }}>
-            <Typography variant="h6" sx={{ color: "text.secondary" }}>
-              Cargando productos...
-            </Typography>
-          </Box>
-        ) : error ? (
-          <Box sx={{ p: 8, textAlign: "center" }}>
-            <Typography variant="h6" color="error">
-              Error: {error}
-            </Typography>
-          </Box>
-        ) : sortedProducts.length === 0 ? (
-          <Box sx={{ p: 8, textAlign: "center" }}>
-            <Typography variant="h6" sx={{ color: "text.secondary" }}>
-              No se encontraron productos.
-            </Typography>
-          </Box>
-        ) : (
-          <Grid container spacing={4}>
-            {displayProducts.map((product, index) => (
-              <Grid item xs={12} sm={6} md={6} lg={4} key={index}>
-                <Fade in={true} timeout={400 + index * 100}>
-                  <StyledCard>
+        <section className="px-4 sm:px-6 lg:px-8 animate-fadeInUp delay-400 flex-1 min-h-0" aria-labelledby="products-title">
+          <div className="h-full overflow-auto custom-scrollbar">
+            {loading ? (
+              <div className="py-20 text-center">
+                <p className="text-xl text-gray-500">Cargando productos...</p>
+              </div>
+            ) : error ? (
+              <div className="py-20 text-center">
+                <p className="text-xl text-red-600">Error: {error}</p>
+              </div>
+            ) : sortedProducts.length === 0 ? (
+              <div className="py-20 text-center">
+                <p className="text-xl text-gray-500">No se encontraron productos.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {displayProducts.map((product, index) => (
+                  <article key={index} className="group bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden border border-green-100 shadow-lg shadow-green-500/10 transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/20 hover:border-green-300 hover:-translate-y-3 hover:scale-[1.02] animate-fadeInUp" style={{ animationDelay: `${index * 50}ms` }}>
                     {product.photo && (
-                      <Box
-                        sx={{
-                          height: 220,
-                          width: "100%",
-                          backgroundImage: `url(${product.photo})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                          backgroundRepeat: "no-repeat",
-                          transition: "transform 0.2s ease",
-                          "&:hover": {
-                            transform: "scale(1.03)",
-                          },
-                        }}
-                      />
+                      <div className="relative h-48 w-full overflow-hidden">
+                        <img
+                          src={product.photo}
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </div>
                     )}
-                    <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          mb: 2,
-                          fontWeight: 800,
-                          color: "#2E7D32",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {product.name}
-                      </Typography>
+                    <div className="p-5 flex flex-col flex-1">
+                      <h3 className="mb-3 font-black text-xl text-green-900 truncate">{product.name}</h3>
 
                       {product.description && (
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            mb: 3,
-                            color: "rgba(0,0,0,0.6)",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            display: "-webkit-box",
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: "vertical",
-                            lineHeight: 1.6,
-                          }}
-                        >
-                          {product.description}
-                        </Typography>
+                        <p className="mb-4 text-gray-600 line-clamp-3 leading-relaxed">{product.description}</p>
                       )}
 
-                      <Box
-                        sx={{ 
-                          display: "flex", 
-                          justifyContent: "space-between", 
-                          alignItems: "center", 
-                          mt: "auto",
-                          gap: 2,
-                        }}
-                      >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <AnimatedChip label={`$${product.price}`} />
-                          {/* show remove button if product is in cart, else show add button */}
+                      <div className="mt-auto flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-2">
+                          <span className="px-3 py-1.5 bg-gradient-to-r from-green-600 to-green-400 text-white font-bold text-lg rounded-full shadow-lg shadow-green-500/30">
+                            ${product.price}
+                          </span>
                           {(() => {
                             const id = product._id || product.id
                             const cartItem = id ? cartItems.find((p) => (p._id || p.id) === id) : cartItems.find((p) => p.name === product.name)
                             if (cartItem) {
                               return (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <Typography sx={{ fontWeight: 700 }}>{cartItem.qty || 1}</Typography>
-                                  <IconButton color="warning" onClick={() => handleDecrementFromProduct(product)} sx={{ bgcolor: 'rgba(0,0,0,0.04)', '&:hover': { bgcolor: 'rgba(0,0,0,0.08)' } }} aria-label="Quitar del carrito">
-                                    <RemoveShoppingCartIcon sx={{ color: '#FBC02D' }} />
-                                  </IconButton>
-                                </Box>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-green-800 bg-green-50 px-3 py-1.5 rounded-full">{cartItem.qty || 1}</span>
+                                  <button
+                                    onClick={() => handleDecrementFromProduct(product)}
+                                    className="p-2 text-yellow-600 bg-yellow-50 rounded-full hover:bg-yellow-100 hover:text-yellow-700 transition-colors"
+                                    aria-label="Quitar del carrito"
+                                  >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                                    </svg>
+                                  </button>
+                                </div>
                               )
                             }
                             return (
-                              <IconButton color="primary" onClick={() => handleAddToCart(product)} sx={{ bgcolor: 'rgba(0,0,0,0.04)', '&:hover': { bgcolor: 'rgba(0,0,0,0.08)' } }} aria-label="Agregar al carrito">
-                                <AddShoppingCartIcon sx={{ color: '#2E7D32' }} />
-                              </IconButton>
+                              <button
+                                onClick={() => handleAddToCart(product)}
+                                className="p-2 text-green-800 bg-green-50 rounded-full hover:bg-green-100 hover:text-green-900 transition-colors"
+                                aria-label="Agregar al carrito"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                </svg>
+                              </button>
                             )
                           })()}
-                        </Box>
-                        <ModernButton
-                          variant="contained"
-                          size="small"
+                        </div>
+                        <button
                           onClick={handleContactClick}
-                          sx={{ px: 3 }}
+                          className="px-5 py-2 bg-gradient-to-r from-green-800 to-green-600 text-white font-bold rounded-xl shadow-lg shadow-green-500/30 hover:from-green-900 hover:to-green-700 hover:shadow-xl hover:shadow-green-500/40 transition-all duration-300 hover:scale-105"
                         >
                           Contactar
-                        </ModernButton>
-                      </Box>
-                    </CardContent>
-                  </StyledCard>
-                </Fade>
-              </Grid>
-            ))}
-          </Grid>
-        )}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
 
-        {/* Pagination mejorada */}
-        {totalPages > 1 && (
-          <Box sx={{ p: 5, mt: 6, textAlign: "center" }}>
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexWrap: "wrap", gap: 1 }}>
-              {/* Botón Anterior */}
-              <PaginationButton
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                sx={{
-                  px: 4,
-                  fontWeight: 700,
-                  fontSize: "0.95rem",
-                }}
-              >
-                Atrás
-              </PaginationButton>
-
-              {/* Números de página */}
-              {[...Array(totalPages).keys()].map((num) => {
-                const page = num + 1
-                return (
-                  <PaginationButton
-                    key={page}
-                    active={page === currentPage}
-                    onClick={() => setCurrentPage(page)}
-                    sx={{
-                      minWidth: 48,
-                      height: 48,
-                      fontWeight: page === currentPage ? 800 : 600,
-                    }}
+            {totalPages > 1 && (
+              <div className="py-10 mt-12 text-center">
+                <div className="flex flex-wrap justify-center items-center gap-2 mb-4">
+                  <button
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`px-5 py-2.5 rounded-xl font-bold text-base transition-all duration-300 ${currentPage === 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
+                      }`}
                   >
-                    {page}
-                  </PaginationButton>
-                )
-              })}
+                    Atrás
+                  </button>
 
-              {/* Botón Siguiente */}
-              <PaginationButton
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                sx={{
-                  px: 4,
-                  fontWeight: 700,
-                  fontSize: "0.95rem",
-                }}
-              >
-                Next
-              </PaginationButton>
-            </Box>
+                  {[...Array(totalPages).keys()].map((num) => {
+                    const page = num + 1
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-12 h-12 rounded-xl font-bold transition-all duration-300 ${page === currentPage
+                            ? "bg-gradient-to-r from-green-600 to-green-400 text-white shadow-lg shadow-green-500/40 scale-110 font-black"
+                            : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    )
+                  })}
 
-            {/* Información adicional */}
-            <Box sx={{ textAlign: "center", mt: 4 }}>
-              <Typography variant="body2" sx={{ color: "rgba(0,0,0,0.6)", fontWeight: 600 }}>
-                Página {currentPage} de {totalPages} • Mostrando {displayProducts.length} de {sortedProducts.length}{" "}
-                productos
-              </Typography>
-            </Box>
-          </Box>
-        )}
-      </Box>
+                  <button
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`px-5 py-2.5 rounded-xl font-bold text-base transition-all duration-300 ${currentPage === totalPages
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
+                      }`}
+                  >
+                    Next
+                  </button>
+                </div>
+
+                <p className="text-gray-600 font-semibold">
+                  Página {currentPage} de {totalPages} • Mostrando {displayProducts.length} de {sortedProducts.length} productos
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
 
       <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
         }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0,0,0,0.05);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(135deg, #388E3C 0%, #4CAF50 100%);
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slideUp { animation: slideUp 0.4s ease-out forwards; }
       `}</style>
     </>
   )

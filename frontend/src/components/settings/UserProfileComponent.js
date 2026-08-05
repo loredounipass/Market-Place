@@ -1,19 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
-import {
-    Typography,
-    TextField,
-    Button,
-    Alert,
-    Avatar
-} from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
 import useAuth from '../../hooks/useAuth';
 import { AuthContext } from '../../hooks/AuthContext';
+
+const inputBase = "w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20";
 
 function UserProfileComponent() {
     const { updateUserProfile, error, successMessage } = useAuth();
     const { auth } = useContext(AuthContext);
-    
+
     const [firstName, setFirstName] = useState(auth.firstName || '');
     const [lastName, setLastName] = useState(auth.lastName || '');
     const [email, setEmail] = useState(auth.email || '');
@@ -51,58 +45,57 @@ function UserProfileComponent() {
     }, [successMessage, error]);
 
     return (
-        <>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '16px' }}>
-                <Avatar style={{ backgroundColor: '#1976D2', width: '48px', height: '48px' }}>
-                    <PersonIcon />
-                </Avatar>
-                <Typography variant="h6" component="h2" style={{ marginTop: '8px', fontWeight: 'bold' }}>
-                    Perfil de Usuario
-                </Typography>
+        <div className="flex flex-col">
+            <div className="flex flex-col items-center mb-4">
+                <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <h2 className="mt-3 text-lg font-bold text-gray-900">Perfil de Usuario</h2>
             </div>
-            <form noValidate autoComplete="off" style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px', margin: '0 auto' }}>
-                <TextField
-                    label="Primer Nombre"
-                    variant="outlined"
+            <form noValidate autoComplete="off" className="flex flex-col gap-4 max-w-md mx-auto w-full">
+                <input
+                    placeholder="Primer Nombre"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
+                    className={inputBase}
                 />
-                <TextField
-                    label="Apellido"
-                    variant="outlined"
+                <input
+                    placeholder="Apellido"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
+                    className={inputBase}
                 />
-                <TextField
-                    label="Correo Electrónico"
-                    variant="outlined"
+                <input
+                    placeholder="Correo Electrónico"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className={inputBase}
                 />
-                <Button
-                    variant="contained"
-                    color="primary"
+                <button
+                    type="button"
+                    className="mt-4 px-5 py-3 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
                     onClick={handleUpdateProfile}
-                    style={{ marginTop: '16px' }}
                 >
                     Actualizar Perfil
-                </Button>
+                </button>
                 {localSuccessMessage && (
-                    <Alert severity="success" style={{ marginTop: '16px' }}>
+                    <div className="mt-4 px-4 py-3 rounded bg-green-50 border border-green-200 text-green-700">
                         {localSuccessMessage}
-                    </Alert>
+                    </div>
                 )}
                 {localError && (
-                    <Alert severity="error" style={{ marginTop: '16px' }}>
+                    <div className="mt-4 px-4 py-3 rounded bg-red-50 border border-red-200 text-red-600">
                         {localError}
-                    </Alert>
+                    </div>
                 )}
             </form>
-        </>
+        </div>
     );
 }
 

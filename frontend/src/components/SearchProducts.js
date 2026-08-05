@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Grid, TextField, Typography, Button } from '@mui/material';
 import useProducts from '../hooks/useProducts';
-import InputAdornment from '@mui/material/InputAdornment';
 
 function SearchProducts() {
   const { products, loading, error } = useProducts();
@@ -24,116 +22,67 @@ function SearchProducts() {
   });
 
   return (
-    <Box sx={{ marginTop: 4, padding: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, color: '#4CAF50' }}>
-        Buscar Productos
-      </Typography>
-      <Box sx={{ mb: 4 }}>
-        <TextField
-          fullWidth
-          label="Palabra clave"
-          variant="outlined"
-          value={keyword}
-          onChange={handleKeywordChange}
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '50px' } }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Button
-                  variant="contained"
-                  onClick={handleSearchClick}
-                  sx={{ borderRadius: '50px', bgcolor: '#4CAF50', '&:hover': { bgcolor: '#388E3C' } }}
-                >
-                  Buscar
-                </Button>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Box>
+    <div className="mt-6 p-6">
+      <h2 className="text-2xl font-bold mb-4 text-green-500">Buscar Productos</h2>
+      <div className="mb-6 max-w-xl">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Palabra clave"
+            value={keyword}
+            onChange={handleKeywordChange}
+            className="w-full px-5 py-3 pr-28 bg-white border border-gray-200 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10 focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/20"
+          />
+          <button
+            onClick={handleSearchClick}
+            className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2 rounded-full bg-green-500 text-white font-semibold hover:bg-green-700 transition-colors"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
       {loading ? (
-        <Typography>Cargando productos...</Typography>
+        <p className="text-gray-600">Cargando productos...</p>
       ) : error ? (
-        <Typography color="error">Error: {error}</Typography>
+        <p className="text-red-500">Error: {error}</p>
       ) : submittedKeyword === '' ? (
-        <Typography>Ingrese una palabra clave y presione Buscar.</Typography>
+        <p className="text-gray-600">Ingrese una palabra clave y presione Buscar.</p>
       ) : filteredProducts.length === 0 ? (
-        <Typography>No se encontraron productos.</Typography>
+        <p className="text-gray-600">No se encontraron productos.</p>
       ) : (
-        <Grid container spacing={4}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {filteredProducts.map((product, index) => (
-            <Grid item xs={12} sm={6} md={6} key={index}>
-              <Box
-                sx={{
-                  p: 3,
-                  border: '1px solid #ddd',
-                  borderRadius: 2,
-                  boxSizing: 'border-box',
-                  overflow: 'hidden',
-                  height: 360,
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-              >
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {product.name}
-                  </Typography>
-                  {product.description && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        mt: 1,
-                        color: '#555',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 3,
-                        WebkitBoxOrient: 'vertical'
-                      }}
-                    >
-                      {product.description}
-                    </Typography>
-                  )}
-                  {product.photo && (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, height: 220, overflow: 'hidden' }}>
-                      <img
-                        src={product.photo}
-                        alt={product.name}
-                        style={{
-                          width: '100%',
-                          height: '220px',
-                          objectFit: 'cover',
-                          borderRadius: 4,
-                          cursor: 'default'
-                        }}
-                      />
-                    </Box>
-                  )}
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                  <Typography variant="body1" sx={{ color: '#4CAF50' }}>
-                    Precio: ${product.price}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      bgcolor: '#4CAF50',
-                      '&:hover': { bgcolor: '#388E3C' },
-                      color: 'white',
-                      textTransform: 'none',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    Contactar
-                  </Button>
-                </Box>
-              </Box>
-            </Grid>
+            <div
+              key={index}
+              className="p-5 border border-gray-200 rounded-xl overflow-hidden h-96 flex flex-col"
+            >
+              <div className="flex-grow">
+                <h3 className="text-lg font-semibold text-gray-900 truncate">{product.name}</h3>
+                {product.description && (
+                  <p className="mt-2 text-sm text-gray-500 line-clamp-3">{product.description}</p>
+                )}
+                {product.photo && (
+                  <div className="flex justify-center mt-3 h-52 overflow-hidden">
+                    <img
+                      src={product.photo}
+                      alt={product.name}
+                      className="w-full h-52 object-cover rounded cursor-default"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-green-500">Precio: ${product.price}</span>
+                <button className="px-4 py-2 rounded bg-green-500 text-white font-bold hover:bg-green-700 transition-colors">
+                  Contactar
+                </button>
+              </div>
+            </div>
           ))}
-        </Grid>
+        </div>
       )}
-    </Box>
+    </div>
   );
 }
 

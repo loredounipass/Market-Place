@@ -1,34 +1,30 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import {
-  Typography,
-  Box,
-  Button,
-  TextField,
-  Grid,
-  Link,
-  Snackbar,
-  Alert,
-  IconButton,
-  InputAdornment,
-  Paper,
-  Container,
-  Fade,
-  Slide,
-  CircularProgress,
-} from "@mui/material"
-import {
-  Visibility,
-  VisibilityOff,
-  ShoppingBag,
-  Person,
-  Email,
-  Lock,
-  PersonAdd,
-  CheckCircle,
-} from "@mui/icons-material"
+import { Link } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
+
+const inputBase = "w-full px-4 py-3 text-sm bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 transition-all duration-200 focus:bg-white focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
+
+function FieldIcon({ d, color = "text-gray-400" }) {
+  return (
+    <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={d} />
+    </svg>
+  )
+}
+
+function EyeIcon({ on }) {
+  return (
+    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {on ? (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+      ) : (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      )}
+    </svg>
+  )
+}
 
 export default function Register() {
   const { registerUser, error } = useAuth()
@@ -73,500 +69,198 @@ export default function Register() {
   const passwordsMatch = password === confirmPassword || confirmPassword === ""
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        py: 4,
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <Container maxWidth="sm">
-        <Fade in={true} timeout={800}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: { xs: 3, sm: 5 },
-              borderRadius: 4,
-              background: "transparent",
-              backdropFilter: "none",
-              border: "none",
-              boxShadow: "none",
-              position: "relative",
-              overflow: "visible",
-            }}
-          >
-            {/* Logo y Header */}
-            <Box sx={{ textAlign: "center", mb: 4 }}>
-              <Slide direction="down" in={true} timeout={600}>
-                <Box
-                  sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 100,
-                    height: 100,
-                    borderRadius: "50%",
-                    background: "linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)",
-                    boxShadow: "0 8px 32px rgba(76, 175, 80, 0.3)",
-                    mb: 3,
-                    position: "relative",
-                    "&::after": {
-                      content: '""',
-                      position: "absolute",
-                      inset: -4,
-                      borderRadius: "50%",
-                      background: "linear-gradient(135deg, #4CAF50, #66BB6A)",
-                      zIndex: -1,
-                      opacity: 0.3,
-                      animation: "pulse 2s ease-in-out infinite",
-                    },
-                  }}
-                >
-                  <ShoppingBag sx={{ color: "white", fontSize: 48 }} />
-                </Box>
-              </Slide>
+    <div className="h-screen bg-gray-100 overflow-hidden animate-fadeIn">
+      <div className="flex h-full items-center justify-center px-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="mx-auto w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center mb-5">
+              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
 
-              <Typography
-                variant="h3"
-                sx={{
-                  fontWeight: 800,
-                  background: "linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  mb: 1,
-                  letterSpacing: "-0.5px",
-                }}
-              >
-                Silk Road
-              </Typography>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              Crear cuenta
+            </h1>
+            <p className="text-sm text-gray-500">
+              Únete a la comunidad de Silk Road
+            </p>
+          </div>
 
-              <Typography
-                variant="h6"
-                sx={{
-                  color: "text.secondary",
-                  fontWeight: 400,
-                  mb: 1,
-                }}
-              >
-                Únete a nuestra comunidad
-              </Typography>
-
-              <Typography
-                variant="body2"
-                sx={{
-                  color: "text.secondary",
-                  opacity: 0.8,
-                }}
-              >
-                Crea tu cuenta y comienza a vender
-              </Typography>
-            </Box>
-
-            {/* Formulario */}
-            <Box component="form" noValidate onSubmit={handleSubmit}>
-              <Grid container spacing={3}>
-                <Grid xs={12} sm={6}>
-                  <TextField
+          <form noValidate onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Nombre
+                </label>
+                <div className="relative">
+                  <FieldIcon d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <input
                     autoComplete="given-name"
                     name="firstName"
                     required
-                    fullWidth
                     id="firstName"
-                    label="Nombre"
+                    placeholder="Juan"
                     autoFocus
-                    error={!!error}
-                    helperText={error ? error : ""}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Person sx={{ color: "#4CAF50" }} />
-                          </InputAdornment>
-                        ),
-                        sx: {
-                          borderRadius: 3,
-                          backgroundColor: "rgba(248, 249, 250, 0.8)",
-                          border: "2px solid transparent",
-                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                            borderColor: "rgba(76, 175, 80, 0.3)",
-                            boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
-                          },
-                          "&.Mui-focused": {
-                            backgroundColor: "white",
-                            borderColor: "#4CAF50",
-                            boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
-                          },
-                        },
-                      },
-                      inputLabel: {
-                        sx: {
-                          "&.Mui-focused": {
-                            color: "#4CAF50",
-                          },
-                        },
-                      },
-                    }}
+                    className={`${inputBase} pl-11 ${error ? "border-red-400" : ""}`}
                   />
-                </Grid>
+                </div>
+              </div>
 
-                <Grid xs={12} sm={6}>
-                  <TextField
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Apellidos
+                </label>
+                <div className="relative">
+                  <FieldIcon d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <input
                     required
-                    fullWidth
                     id="lastName"
-                    label="Apellidos"
+                    placeholder="Pérez"
                     name="lastName"
                     autoComplete="family-name"
-                    error={!!error}
-                    helperText={error ? error : ""}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Person sx={{ color: "#4CAF50" }} />
-                          </InputAdornment>
-                        ),
-                        sx: {
-                          borderRadius: 3,
-                          backgroundColor: "rgba(248, 249, 250, 0.8)",
-                          border: "2px solid transparent",
-                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                            borderColor: "rgba(76, 175, 80, 0.3)",
-                            boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
-                          },
-                          "&.Mui-focused": {
-                            backgroundColor: "white",
-                            borderColor: "#4CAF50",
-                            boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
-                          },
-                        },
-                      },
-                      inputLabel: {
-                        sx: {
-                          "&.Mui-focused": {
-                            color: "#4CAF50",
-                          },
-                        },
-                      },
-                    }}
+                    className={`${inputBase} pl-11 ${error ? "border-red-400" : ""}`}
                   />
-                </Grid>
+                </div>
+              </div>
+            </div>
 
-                <Grid xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="email"
-                    label="Correo electrónico"
-                    name="email"
-                    autoComplete="email"
-                    error={!!error}
-                    helperText={error ? error : ""}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Email sx={{ color: "#4CAF50" }} />
-                          </InputAdornment>
-                        ),
-                        sx: {
-                          borderRadius: 3,
-                          backgroundColor: "rgba(248, 249, 250, 0.8)",
-                          border: "2px solid transparent",
-                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                            borderColor: "rgba(76, 175, 80, 0.3)",
-                            boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
-                          },
-                          "&.Mui-focused": {
-                            backgroundColor: "white",
-                            borderColor: "#4CAF50",
-                            boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
-                          },
-                        },
-                      },
-                      inputLabel: {
-                        sx: {
-                          "&.Mui-focused": {
-                            color: "#4CAF50",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </Grid>
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+                Correo electrónico
+              </label>
+              <div className="relative">
+                <FieldIcon d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <input
+                  required
+                  type="email"
+                  id="email"
+                  placeholder="tu@correo.com"
+                  name="email"
+                  autoComplete="email"
+                  className={`${inputBase} pl-11 ${error ? "border-red-400" : ""}`}
+                />
+              </div>
+              {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
+            </div>
 
-                <Grid xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="password"
-                    label="Contraseña"
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    autoComplete="new-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    error={!!error}
-                    helperText={error ? error : ""}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Lock sx={{ color: "#4CAF50" }} />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={() => setShowPassword(!showPassword)}
-                              sx={{
-                                color: "#4CAF50",
-                                "&:hover": {
-                                  backgroundColor: "rgba(76, 175, 80, 0.08)",
-                                },
-                              }}
-                            >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                        sx: {
-                          borderRadius: 3,
-                          backgroundColor: "rgba(248, 249, 250, 0.8)",
-                          border: "2px solid transparent",
-                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                            borderColor: "rgba(76, 175, 80, 0.3)",
-                            boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
-                          },
-                          "&.Mui-focused": {
-                            backgroundColor: "white",
-                            borderColor: "#4CAF50",
-                            boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
-                          },
-                        },
-                      },
-                      inputLabel: {
-                        sx: {
-                          "&.Mui-focused": {
-                            color: "#4CAF50",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </Grid>
-
-                <Grid xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="confirmPassword"
-                    label="Confirmar contraseña"
-                    type={showConfirmPassword ? "text" : "password"}
-                    id="confirmPassword"
-                    autoComplete="new-password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    error={!passwordsMatch}
-                    helperText={!passwordsMatch ? "Las contraseñas no coinciden" : ""}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            {passwordsMatch && confirmPassword ? (
-                              <CheckCircle sx={{ color: "#4CAF50" }} />
-                            ) : (
-                              <Lock sx={{ color: !passwordsMatch ? "#f44336" : "#4CAF50" }} />
-                            )}
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle confirm password visibility"
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                              sx={{
-                                color: "#4CAF50",
-                                "&:hover": {
-                                  backgroundColor: "rgba(76, 175, 80, 0.08)",
-                                },
-                              }}
-                            >
-                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                        sx: {
-                          borderRadius: 3,
-                          backgroundColor: "rgba(248, 249, 250, 0.8)",
-                          border: `2px solid ${!passwordsMatch ? "#f44336" : "transparent"}`,
-                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                          "&:hover": {
-                            backgroundColor: "rgba(255, 255, 255, 0.9)",
-                            borderColor: !passwordsMatch ? "#f44336" : "rgba(76, 175, 80, 0.3)",
-                            boxShadow: `0 4px 15px ${!passwordsMatch ? "rgba(244, 67, 54, 0.1)" : "rgba(76, 175, 80, 0.1)"}`,
-                          },
-                          "&.Mui-focused": {
-                            backgroundColor: "white",
-                            borderColor: !passwordsMatch ? "#f44336" : "#4CAF50",
-                            boxShadow: `0 4px 20px ${!passwordsMatch ? "rgba(244, 67, 54, 0.2)" : "rgba(76, 175, 80, 0.2)"}`,
-                          },
-                        },
-                      },
-                      inputLabel: {
-                        sx: {
-                          "&.Mui-focused": {
-                            color: !passwordsMatch ? "#f44336" : "#4CAF50",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </Grid>
-              </Grid>
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={loading || !passwordsMatch}
-                sx={{
-                  mt: 4,
-                  py: 2,
-                  borderRadius: 3,
-                  background: "linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)",
-                  boxShadow: "0 8px 25px rgba(76, 175, 80, 0.3)",
-                  fontSize: "1.1rem",
-                  fontWeight: 700,
-                  textTransform: "none",
-                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                  "&:hover": {
-                    background: "linear-gradient(135deg, #388E3C 0%, #4CAF50 100%)",
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 12px 35px rgba(76, 175, 80, 0.4)",
-                  },
-                  "&:active": {
-                    transform: "translateY(0)",
-                  },
-                  "&:disabled": {
-                    background: "rgba(76, 175, 80, 0.3)",
-                    transform: "none",
-                  },
-                }}
-              >
-                {loading ? (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <CircularProgress size={24} sx={{ color: "white" }} />
-                    <Typography sx={{ color: "white", fontWeight: 600 }}>Creando cuenta...</Typography>
-                  </Box>
-                ) : (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <PersonAdd />
-                    Registrarse
-                  </Box>
-                )}
-              </Button>
-
-              {/* Enlaces */}
-              <Box sx={{ mt: 4, textAlign: "center" }}>
-                <Link
-                  href="/login"
-                  sx={{
-                    color: "#4CAF50",
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    fontSize: "0.95rem",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      color: "#2E7D32",
-                      textDecoration: "underline",
-                      textDecorationColor: "#4CAF50",
-                    },
-                  }}
+            <div className="mb-4">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
+                Contraseña
+              </label>
+              <div className="relative">
+                <FieldIcon d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <input
+                  required
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`${inputBase} pl-11 pr-11 ${error ? "border-red-400" : ""}`}
+                />
+                <button
+                  type="button"
+                  aria-label="toggle password visibility"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-gray-100 transition-colors"
                 >
-                  ¿Ya tienes una cuenta? Inicia sesión aquí
-                </Link>
-              </Box>
-            </Box>
+                  <EyeIcon on={showPassword} />
+                </button>
+              </div>
+            </div>
 
-            {/* Decoración */}
-            <Box
-              sx={{
-                position: "absolute",
-                top: -100,
-                right: -100,
-                width: 200,
-                height: 200,
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, transparent 70%)",
-                pointerEvents: "none",
-              }}
-            />
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: -80,
-                left: -80,
-                width: 160,
-                height: 160,
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, transparent 70%)",
-                pointerEvents: "none",
-              }}
-            />
-          </Paper>
-        </Fade>
+            <div className="mb-6">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1.5">
+                Confirmar contraseña
+              </label>
+              <div className="relative">
+                {passwordsMatch && confirmPassword ? (
+                  <FieldIcon d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" color="text-green-500" />
+                ) : (
+                  <FieldIcon d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" color={!passwordsMatch ? "text-red-500" : "text-gray-400"} />
+                )}
+                <input
+                  required
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`${inputBase} pl-11 pr-11 ${!passwordsMatch ? "border-red-400 focus:border-red-500" : ""}`}
+                />
+                <button
+                  type="button"
+                  aria-label="toggle confirm password visibility"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-gray-100 transition-colors"
+                >
+                  <EyeIcon on={showConfirmPassword} />
+                </button>
+              </div>
+              {!passwordsMatch && <p className="mt-1.5 text-xs text-red-500">Las contraseñas no coinciden</p>}
+            </div>
 
-        {/* Snackbar */}
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity="error"
-            sx={{
-              width: "100%",
-              borderRadius: 3,
-              boxShadow: "0 8px 32px rgba(244, 67, 54, 0.2)",
-            }}
-          >
-            {error || "Ha ocurrido un error al registrarse."}
-          </Alert>
-        </Snackbar>
-      </Container>
+            <button
+              type="submit"
+              disabled={loading || !passwordsMatch}
+              className="w-full py-3 rounded-lg bg-green-500 text-sm font-semibold text-white shadow-sm shadow-green-500/30 transition-all duration-200 hover:bg-green-600 active:scale-[0.99] disabled:bg-green-500/50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  <span className="text-white">Creando cuenta...</span>
+                </span>
+              ) : (
+                "Registrarse"
+              )}
+            </button>
 
-      {/* Estilos CSS para animaciones */}
+            <div className="mt-6 text-center">
+              <span className="text-sm text-gray-500">¿Ya tienes una cuenta?{" "}</span>
+              <Link to="/login" className="text-sm font-semibold text-green-600 hover:text-green-700">
+                Inicia sesión aquí
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {openSnackbar && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-slideDown" role="alert">
+          <div className="flex items-center gap-2 px-5 py-3.5 rounded-lg bg-red-50 border border-red-200 text-red-700 shadow-lg">
+            <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-sm font-medium">{error || (password !== confirmPassword ? "Las contraseñas no coinciden." : "Ha ocurrido un error al registrarse.")}</span>
+            <button onClick={handleCloseSnackbar} className="ml-2 text-red-400 hover:text-red-600 transition-colors" aria-label="Cerrar">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <style>{`
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 0.3;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.5;
-            transform: scale(1.05);
-          }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slideDown { animation: slideDown 0.3s ease-out; }
       `}</style>
-    </Box>
+    </div>
   )
 }

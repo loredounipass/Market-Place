@@ -1,7 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Typography, Box, Button, TextField, Grid, Alert, Container, CircularProgress } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import RefreshIcon from '@mui/icons-material/Refresh'; 
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +6,7 @@ const VerifyToken = () => {
     const [formValues, setFormValues] = useState({ token: '' });
     const { verifyToken, error } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [localError, setLocalError] = useState(null); 
+    const [localError, setLocalError] = useState(null);
     const navigate = useNavigate();
     const isMounted = useRef(true);
 
@@ -28,7 +25,7 @@ const VerifyToken = () => {
 
         const storedEmail = localStorage.getItem('email');
         if (!storedEmail) {
-            setLocalError('No se encontró el correo electrónico. Por favor, asegúrate de que estés autenticado.'); // Mensaje de error si no se encuentra el correo
+            setLocalError('No se encontró el correo electrónico. Por favor, asegúrate de que estés autenticado.');
             return;
         }
 
@@ -51,118 +48,73 @@ const VerifyToken = () => {
     };
 
     return (
-        <Container maxWidth="xs" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 2 }}>
-            <Box
-                component="form"
+        <div className="w-full max-w-sm mx-auto flex flex-col items-center mt-6 px-4">
+            <form
                 onSubmit={handleSubmit}
                 noValidate
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    width: '100%',
-                    padding: 3,
-                    borderRadius: 2,
-                    boxShadow: '0 0 25px rgba(0, 128, 0, 0.6)',
-                    bgcolor: 'background.paper',
-                    border: '1px solid #ddd',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    animation: 'glow 1.5s infinite alternate'
-                }}
+                className="w-full flex flex-col items-center p-6 rounded-xl bg-white border border-gray-200 shadow-[0_0_25px_rgba(0,128,0,0.6)] relative overflow-hidden animate-glow"
             >
-              
-                <Box
-                    sx={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: '50%', 
-                        bgcolor: '#4CAF50', 
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 2,
-                    }}
-                >
-                    <ArrowDropDownIcon sx={{ color: 'white', fontSize: 50 }} />
-                </Box>
-                <Typography component="h1" variant="h5" sx={{ color: '#4CAF50' }}>
-                    Silk Road
-                </Typography>
-                <Typography variant="body1" align="center" sx={{ mb: 4, fontFamily: 'Arial, sans-serif' }}>
+                <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center mb-4">
+                    <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+                <h1 className="text-xl font-medium text-green-500">Silk Road</h1>
+                <p className="text-sm text-center mb-6 font-sans">
                     Por favor, ingresa el token que recibiste en el correo electrónico
-                </Typography>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Token"
-                            variant="outlined"
+                </p>
+
+                <div className="w-full space-y-4">
+                    <div>
+                        <input
+                            type="text"
                             name="token"
                             value={formValues.token}
                             onChange={handleChange}
                             required
-                            margin="normal"
-                            InputProps={{ sx: { borderRadius: 2, border: '1px solid #ddd' } }}
+                            placeholder="Token"
+                            className="w-full px-4 py-3 rounded-lg bg-white border border-gray-200 text-sm focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/20"
                         />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button 
-                            type="submit" 
-                            variant="contained" 
-                            sx={{
-                                backgroundColor: '#4CAF50', 
-                                '&:hover': {
-                                    backgroundColor: '#45a049', 
-                                },
-                                borderRadius: 2,
-                                color: 'white',
-                            }} 
-                            fullWidth
-                            disabled={loading} 
-                        >
-                            {loading ? (
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <CircularProgress size={20} sx={{ color: '#074EE7FF' }} />
-                                    <Typography sx={{ ml: 1, color: '#074EE7FF', fontSize: '0.875rem' }}>Verificando...</Typography>
-                                </Box>
-                            ) : 'Verificar'}
-                        </Button>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Box 
-                            sx={{ 
-                                display: 'flex', 
-                                justifyContent: 'center', 
-                                alignItems: 'center', 
-                                mt: 2, 
-                                cursor: 'pointer',
-                                textDecoration: 'underline', 
-                                color: '#4CAF50' 
-                            }}
-                            onClick={handleResend} 
-                        >
-                            <RefreshIcon sx={{ mr: 1 }} /> 
-                            <Typography variant="body2">Reenviar Token</Typography>
-                        </Box>
-                    </Grid>
-                    {localError && ( 
-                        <Grid item xs={12}>
-                            <Alert severity="error" sx={{ mt: 2 }}>
-                                {localError}
-                            </Alert>
-                        </Grid>
-                    )}
-                    {error && (
-                        <Grid item xs={12}>
-                            <Alert severity="error" sx={{ mt: 2 }}>
-                                {error}
-                            </Alert>
-                        </Grid>
-                    )}
-                </Grid>
-            </Box>
-        </Container>
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-3 rounded-lg bg-green-500 text-white font-medium hover:bg-green-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                        {loading ? (
+                            <span className="flex items-center justify-center">
+                                <svg className="w-5 h-5 animate-spin text-white mr-2" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                <span className="text-sm">Verificando...</span>
+                            </span>
+                        ) : 'Verificar'}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleResend}
+                        className="w-full flex justify-center items-center py-1 text-sm underline text-green-500 cursor-pointer hover:text-green-600"
+                    >
+                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Reenviar Token
+                    </button>
+                </div>
+
+                {localError && (
+                    <div className="w-full mt-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+                        {localError}
+                    </div>
+                )}
+                {error && (
+                    <div className="w-full mt-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+                        {error}
+                    </div>
+                )}
+            </form>
+        </div>
     );
 };
 

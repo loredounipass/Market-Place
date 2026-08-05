@@ -1,39 +1,9 @@
 "use client"
 
 import React, { useState, useContext } from "react"
-import { styled } from "@mui/material/styles"
-import {
-  AppBar as MuiAppBar,
-  Toolbar,
-  Box,
-  Typography,
-  IconButton,
-  Link,
-  MenuItem,
-  Menu,
-  Avatar,
-  Tooltip,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material"
-import { Menu as MenuIcon, Settings as SettingsIcon, ExitToApp as LogoutIcon } from "@mui/icons-material"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import { AuthContext } from "../hooks/AuthContext"
-import { ShoppingBag as ShoppingBagIcon } from "@mui/icons-material"
-
-const drawerWidth = 280
-
-const AppBar = styled(MuiAppBar)(({ theme }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  background: "linear-gradient(135deg, #2E7D32 0%, #4CAF50 50%, #66BB6A 100%)",
-  boxShadow: "0 4px 20px rgba(76, 175, 80, 0.3)",
-  backdropFilter: "blur(10px)",
-}))
 
 export default function Navbar() {
   const { auth } = useContext(AuthContext)
@@ -41,8 +11,6 @@ export default function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const navigate = useNavigate()
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"))
 
   if (!auth) return null
 
@@ -53,9 +21,8 @@ export default function Navbar() {
   ]
 
   const settings = [
-    { label: `Hi, ${auth.firstName}`, icon: null },
-    { label: "Settings", icon: <SettingsIcon sx={{ mr: 1 }} /> },
-    { label: "Logout", icon: <LogoutIcon sx={{ mr: 1 }} /> },
+    { label: "Settings", action: "settings" },
+    { label: "Logout", action: "logout" },
   ]
 
   const getAvatarColor = (name) => {
@@ -66,13 +33,12 @@ export default function Navbar() {
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget)
   const handleCloseUserMenu = () => setAnchorElUser(null)
 
-  const handleClickUserMenu = async (e) => {
+  const handleClickUserMenu = async (e, action) => {
     e.stopPropagation()
-    const action = e.target.innerHTML
-    if (action === "Logout") {
+    if (action === "logout") {
       await logoutUser()
       window.location.reload()
-    } else if (action === "Settings") {
+    } else if (action === "settings") {
       navigate("/settings")
     }
     setAnchorElUser(null)
@@ -81,67 +47,109 @@ export default function Navbar() {
 
   return (
     <>
-      <AppBar position="absolute">
-        <Toolbar sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pr: "24px", minHeight: 70 }}>
-          {isMobile && (
-            <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => setDrawerOpen(true)} sx={{ position: "absolute", left: 16 }}>
-              <MenuIcon />
-            </IconButton>
-          )}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-green-800 via-green-600 to-green-400 shadow-lg shadow-green-500/30">
+        <div className="flex items-center justify-between h-16 px-6">
+          <button 
+            className="lg:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
+            onClick={() => setDrawerOpen(true)}
+            aria-label="menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
 
-          <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center", ml: 3 }}>
-            <Link href="/" sx={{ display: "flex", alignItems: "center", textDecoration: "none", color: "inherit" }}>
-              <Box sx={{ m: 1, width: 55, height: 55, borderRadius: "50%", background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)", border: "3px solid rgba(255, 255, 255, 0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <ShoppingBagIcon sx={{ color: "#4CAF50", fontSize: 28 }} />
-              </Box>
-              <Typography variant="h5" sx={{ display: "flex", alignItems: "center", color: "white", ml: 2, fontWeight: 700, letterSpacing: "0.5px" }}>
-                Silk Road
-              </Typography>
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center text-decoration-none text-white">
+              <div className="m-2 w-14 h-14 rounded-full bg-gradient-to-br from-white to-gray-100 border-3 border-white/30 flex items-center justify-center">
+                <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <h1 className="ml-2 text-xl font-bold tracking-wide">Silk Road</h1>
             </Link>
-          </Box>
+          </div>
 
-          {!isMobile && (
-            <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center", gap: 1 }}>
-              {navItems.map(({ href, label }) => (
-                <Link key={label} href={href} sx={{ textDecoration: "none", color: "white", px: 3, py: 1, borderRadius: 2 }}>
-                  <Typography variant="body1" sx={{ fontWeight: 600, fontSize: "0.95rem" }}>{label}</Typography>
-                </Link>
-              ))}
-            </Box>
-          )}
+          <nav className="hidden lg:flex items-center gap-2">
+            {navItems.map(({ href, label }) => (
+              <Link 
+                key={label} 
+                to={href} 
+                className="text-white px-4 py-2 rounded-lg hover:bg-white/10 transition-colors font-medium text-sm"
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
 
-          <Box>
-            <Tooltip title="Configuración de usuario">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar sx={{ background: `linear-gradient(135deg, ${getAvatarColor(auth.firstName)} 0%, ${getAvatarColor(auth.firstName)}CC 100%)`, width: 42, height: 42, fontSize: 18, fontWeight: "bold", color: "#fff", border: "3px solid rgba(255, 255, 255, 0.3)" }}>
-                  {auth.firstName.charAt(0)}
-                </Avatar>
-              </IconButton>
-            </Tooltip>
-            <Menu sx={{ mt: '45px' }} anchorEl={anchorElUser} open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
-              {settings.map(({ label, icon }) => (
-                <MenuItem key={label} onClick={handleClickUserMenu} sx={{ py: 1.5, px: 3 }}>{icon}<Typography textAlign="center" sx={{ fontWeight: 500 }}>{label}</Typography></MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </AppBar>
+          <div className="relative">
+            <button 
+              onClick={handleOpenUserMenu}
+              className="p-0"
+              aria-label="Configuración de usuario"
+            >
+              <div 
+                className="w-10 h-10 rounded-full font-bold text-white border-3 border-white/30 flex items-center justify-center"
+                style={{ background: `linear-gradient(135deg, ${getAvatarColor(auth.firstName)} 0%, ${getAvatarColor(auth.firstName)}CC 100%)` }}
+              >
+                {auth.firstName.charAt(0)}
+              </div>
+            </button>
 
-      {isMobile && (
-        <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)} sx={{ '& .MuiDrawer-paper': { background: 'linear-gradient(180deg, #2E7D32 0%, #4CAF50 100%)', color: 'white', width: drawerWidth } }}>
-          <Box sx={{ width: drawerWidth, paddingTop: 10 }} role="presentation">
-            <List>
-              {navItems.map(({ href, label }) => (
-                <ListItem button component={Link} key={label} href={href} sx={{ py: 2, mx: 2, borderRadius: 2, mb: 1 }} onClick={() => setDrawerOpen(false)}>
-                  <ListItemText primary={label} sx={{ color: "white" }} />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        </Drawer>
+            {anchorElUser && (
+              <div 
+                className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                role="menu"
+              >
+                <div className="px-4 py-2 border-b border-gray-200">
+                  <p className="font-medium text-gray-900 text-center">Hi, {auth.firstName}</p>
+                </div>
+                {settings.map(({ label, action }) => (
+                  <button
+                    key={label}
+                    onClick={(e) => handleClickUserMenu(e, action)}
+                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors font-medium"
+                    role="menuitem"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {drawerOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div 
+            className="fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-green-800 to-green-600 text-white shadow-xl transform transition-transform"
+            style={{ transform: 'translateX(0)' }}
+          >
+            <div className="pt-10">
+              <nav>
+                {navItems.map(({ href, label }) => (
+                  <Link 
+                    key={label} 
+                    to={href} 
+                    onClick={() => setDrawerOpen(false)}
+                    className="block px-6 py-3 mx-4 rounded-lg mb-2 hover:bg-white/10 transition-colors font-medium"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </div>
+          <div 
+            className="fixed inset-0 bg-black/50" 
+            onClick={() => setDrawerOpen(false)} 
+            aria-hidden="true"
+          />
+        </div>
       )}
 
-      <Box sx={{ marginTop: { xs: 10, md: 12 } }} />
+      <div className="pt-16 lg:pt-20 min-h-screen" />
     </>
   )
 }

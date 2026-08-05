@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Typography, Box, Grid, Alert } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import useAuth from '../../hooks/useAuth'; 
+import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const ResendTokenForm = () => {
@@ -13,7 +11,7 @@ const ResendTokenForm = () => {
         if (successMessage === 'Código de verificación reenviado a tu correo electrónico.') {
             navigate('/verifytoken');
         }
-    }, [successMessage, history]);
+    }, [successMessage]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -25,95 +23,53 @@ const ResendTokenForm = () => {
     };
 
     return (
-        <Container maxWidth="xs" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 2 }}>
-            <Box
-                component="form"
+        <div className="w-full max-w-sm mx-auto flex flex-col items-center mt-6 px-4">
+            <form
                 onSubmit={handleSubmit}
                 noValidate
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    width: '100%',
-                    padding: 3,
-                    borderRadius: 2,
-                    boxShadow: '0 0 25px rgba(0, 123, 255, 0.6)',
-                    bgcolor: 'background.paper',
-                    border: '1px solid #ddd',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    animation: 'glow 1.5s infinite alternate'
-                }}
+                className="w-full flex flex-col items-center p-6 rounded-xl bg-white border border-gray-200 shadow-[0_0_25px_rgba(0,123,255,0.6)] relative overflow-hidden animate-glow"
             >
-               
-                <Box
-                    sx={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: '50%',
-                        bgcolor: '#4CAF50', 
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 2,
-                    }}
-                >
-                    <ArrowDropDownIcon sx={{ color: 'white', fontSize: 50 }} />
-                </Box>
-                <Typography component="h1" variant="h5" sx={{ color: '#4CAF50' }}>
-                    BlockVault 
-                </Typography>
-                <Typography variant="body1" align="center" sx={{ mb: 4, fontFamily: 'Arial, sans-serif' }}>
+                <div className="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center mb-4">
+                    <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+                <h1 className="text-xl font-medium text-green-500">BlockVault</h1>
+                <p className="text-sm text-center mb-6 font-sans">
                     Ingresa tu correo electrónico para reenviar el código de verificación
-                </Typography>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Correo Electrónico"
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
+                </p>
+
+                <div className="w-full space-y-4">
+                    <div>
+                        <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            InputProps={{ sx: { borderRadius: 2, border: '1px solid #ddd' } }}
+                            placeholder="Correo Electrónico"
+                            className="w-full px-4 py-3 rounded-lg bg-white border border-gray-200 text-sm focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/20"
                         />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            sx={{
-                                backgroundColor: '#4CAF50', 
-                                '&:hover': {
-                                    backgroundColor: '#45a049', 
-                                },
-                                borderRadius: 2,
-                                color: 'white',
-                            }}
-                            fullWidth
-                        >
-                            Reenviar Código
-                        </Button>
-                    </Grid>
-                    {error && (
-                        <Grid item xs={12}>
-                            <Alert severity="error" sx={{ mt: 2 }}>
-                                {error}
-                            </Alert>
-                        </Grid>
-                    )}
-                    {successMessage && (
-                        <Grid item xs={12}>
-                            <Alert severity="success" sx={{ mt: 2 }}>
-                                {successMessage}
-                            </Alert>
-                        </Grid>
-                    )}
-                </Grid>
-            </Box>
-        </Container>
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full py-3 rounded-lg bg-green-500 text-white font-medium hover:bg-green-600 transition-colors"
+                    >
+                        Reenviar Código
+                    </button>
+                </div>
+
+                {error && (
+                    <div className="w-full mt-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+                        {error}
+                    </div>
+                )}
+                {successMessage && (
+                    <div className="w-full mt-4 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-600 text-sm">
+                        {successMessage}
+                    </div>
+                )}
+            </form>
+        </div>
     );
 };
 

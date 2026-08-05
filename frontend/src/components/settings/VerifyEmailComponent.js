@@ -1,26 +1,24 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import { Alert, Typography, CircularProgress, Button, Snackbar } from '@mui/material'; 
-import { AuthContext } from '../../hooks/AuthContext'; 
-import useAuth from '../../hooks/useAuth'; 
-import MuiAlert from '@mui/material/Alert';
+import { AuthContext } from '../../hooks/AuthContext';
+import useAuth from '../../hooks/useAuth';
 
 const VerifyEmailComponent = () => {
-    const { auth } = useContext(AuthContext); 
-    const { sendVerificationEmail, isEmailVerified, error } = useAuth(); 
+    const { auth } = useContext(AuthContext);
+    const { sendVerificationEmail, isEmailVerified, error } = useAuth();
 
     const [verificationStatus, setVerificationStatus] = useState(null);
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
     const [localError, setLocalError] = useState(null);
     const [emailVerified, setEmailVerified] = useState(false);
-    const [hasCheckedVerification, setHasCheckedVerification] = useState(false); 
-    const [sending, setSending] = useState(false); 
+    const [hasCheckedVerification, setHasCheckedVerification] = useState(false);
+    const [sending, setSending] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
 
     useEffect(() => {
         const checkEmailVerification = async () => {
-            setLocalError(null); 
+            setLocalError(null);
             try {
-                const isVerified = await isEmailVerified(); 
+                const isVerified = await isEmailVerified();
 
                 if (isVerified) {
                     setVerificationStatus({
@@ -37,24 +35,24 @@ const VerifyEmailComponent = () => {
                 }
             } catch (err) {
                 setLocalError(err.message || 'Error al verificar el correo.');
-                setVerificationStatus(null); 
+                setVerificationStatus(null);
             } finally {
-                setLoading(false); 
-                setHasCheckedVerification(true); 
+                setLoading(false);
+                setHasCheckedVerification(true);
             }
         };
 
         if (auth && auth.email && !hasCheckedVerification) {
-            checkEmailVerification(); 
+            checkEmailVerification();
         } else if (!auth || !auth.email) {
             setLocalError('No se ha encontrado un correo electrónico autenticado.');
-            setLoading(false); 
+            setLoading(false);
         }
-    }, [auth, isEmailVerified, hasCheckedVerification]); 
+    }, [auth, isEmailVerified, hasCheckedVerification]);
 
     const handleSendVerificationEmail = async () => {
         if (auth && auth.email) {
-            setSending(true); 
+            setSending(true);
             try {
                 await sendVerificationEmail(auth.email);
                 setSnackbar({ open: true, message: "Correo de verificación enviado.", severity: "success" });
@@ -62,7 +60,7 @@ const VerifyEmailComponent = () => {
                 setLocalError(error.message || 'Error al enviar el correo de verificación.');
                 setSnackbar({ open: true, message: localError, severity: "error" });
             } finally {
-                setSending(false); 
+                setSending(false);
             }
         }
     };
@@ -79,112 +77,72 @@ const VerifyEmailComponent = () => {
     }, [snackbar.open, handleCloseSnackbar]);
 
     return (
-        <>
-            <Typography 
-                variant="h4" 
-                gutterBottom 
-                sx={{ 
-                    fontWeight: 'bold', 
-                    color: '#333', 
-                    textAlign: 'center', 
-                    padding: 2,
-                    fontSize: { xs: '1.5rem', sm: '2rem' } 
-                }}
-            >
+        <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center p-3">
                 Verificar Correo Electrónico
-            </Typography>
-            <Typography 
-                variant="body1" 
-                gutterBottom 
-                sx={{ 
-                    color: '#555', 
-                    textAlign: 'center', 
-                    maxWidth: '400px', 
-                    margin: '0 auto', 
-                    fontSize: { xs: '0.9rem', sm: '1rem' } 
-                }}
-            >
+            </h2>
+            <p className="text-gray-500 text-center max-w-md mx-auto text-sm sm:text-base">
                 Correo electrónico autenticado: <strong>{auth?.email || 'Correo no disponible'}</strong>
-            </Typography>
+            </p>
+
             {loading ? (
-                <CircularProgress sx={{ display: 'block', margin: '20px auto', color: '#1976d2' }} />
+                <div className="flex justify-center py-6">
+                    <svg className="w-8 h-8 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                </div>
             ) : (
                 <>
                     {localError && (
-                        <Alert 
-                            severity="error" 
-                            sx={{ 
-                                mt: 3, 
-                                borderRadius: '8px', 
-                                backgroundColor: '#f44336', 
-                                color: '#fff', 
-                                fontWeight: 'bold', 
-                                textAlign: 'center', 
-                                maxWidth: '400px', 
-                                margin: '0 auto' 
-                            }}
-                        >
+                        <div className="mt-4 px-5 py-4 rounded-lg bg-red-500 text-white font-bold text-center max-w-md mx-auto">
                             {localError}
-                        </Alert>
+                        </div>
                     )}
                     {verificationStatus && (
-                        <Alert 
-                            severity={verificationStatus.verified ? 'success' : 'warning'} 
-                            sx={{ 
-                                mt: 3, 
-                                borderRadius: '8px', 
-                                backgroundColor: verificationStatus.verified ? '#4caf50' : '#ff9800', 
-                                color: '#fff', 
-                                fontWeight: 'bold', 
-                                textAlign: 'center', 
-                                maxWidth: '400px', 
-                                margin: '0 auto' 
-                            }}
-                        >
+                        <div className={`mt-4 px-5 py-4 rounded-lg text-white font-bold text-center max-w-md mx-auto ${
+                            verificationStatus.verified ? 'bg-green-500' : 'bg-orange-500'
+                        }`}>
                             {verificationStatus.message}
-                        </Alert>
+                        </div>
                     )}
-                    <Button
-                        variant="contained"
-                        color="primary"
+                    <button
+                        type="button"
                         onClick={handleSendVerificationEmail}
-                        disabled={emailVerified || sending} 
-                        sx={{ 
-                            display: 'block', 
-                            margin: '20px auto', 
-                            padding: '10px 20px', 
-                            fontSize: { xs: '14px', sm: '16px' }, 
-                            borderRadius: '20px', 
-                            maxWidth: '200px' 
-                        }}
+                        disabled={emailVerified || sending}
+                        className="block mx-auto mt-6 px-6 py-3 text-sm sm:text-base rounded-full bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors max-w-[200px] disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                        {sending ? <CircularProgress size={24} color="inherit" /> : (emailVerified ? 'Verificado' : 'Enviar Correo')}
-                    </Button>
+                        {sending ? (
+                            <svg className="w-6 h-6 animate-spin mx-auto text-white" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                        ) : (emailVerified ? 'Verificado' : 'Enviar Correo')}
+                    </button>
                 </>
             )}
-            <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={handleCloseSnackbar}>
-                <MuiAlert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-                    {snackbar.message}
-                </MuiAlert>
-            </Snackbar>
-            {error && (
-                <Alert 
-                    severity="error" 
-                    sx={{ 
-                        mb: 2, 
-                        borderRadius: '8px', 
-                        backgroundColor: '#f44336', 
-                        color: '#fff', 
-                        fontWeight: 'bold', 
-                        textAlign: 'center', 
-                        maxWidth: '400px', 
-                        margin: '0 auto' 
-                    }}
-                >
-                    {error}
-                </Alert>
+
+            {snackbar.open && (
+                <div className={`fixed bottom-6 left-6 z-50 text-white rounded-lg px-5 py-3 shadow-xl ${
+                    snackbar.severity === 'success' ? 'bg-green-500' : 'bg-red-500'
+                }`}>
+                    <div className="flex items-center gap-2">
+                        <span>{snackbar.message}</span>
+                        <button onClick={handleCloseSnackbar} className="ml-2 text-white/80 hover:text-white" aria-label="Cerrar">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             )}
-        </>
+
+            {error && (
+                <div className="mb-3 px-5 py-4 rounded-lg bg-red-500 text-white font-bold text-center max-w-md mx-auto">
+                    {error}
+                </div>
+            )}
+        </div>
     );
 };
 

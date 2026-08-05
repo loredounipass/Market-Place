@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import { Box, Typography, FormControl, InputLabel, Select, MenuItem, Chip } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check'; 
 import { useLanguage } from '../../hooks/LanguageContext';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
@@ -30,41 +28,20 @@ function LanguageSelectorComponent() {
     };
 
     return (
-        <Box
-            sx={{
-                mt: 4,
-                p: 3,
-                bgcolor: 'white',
-                borderRadius: 1,
-                boxShadow: 3,
-                maxWidth: 320,
-                mx: 'auto',
-                border: '1px solid #e0e0e0',
-            }}
-        >
-            <Typography variant="h6" component="h2" gutterBottom>
-                {t('language_selection')}
-            </Typography>
-            <FormControl fullWidth variant="outlined">
-                <InputLabel id="language-select-label">{t('language')}</InputLabel>
-                <Select
-                    labelId="language-select-label"
-                    id="language-select"
-                    value={language}
-                    onChange={handleChange}
-                    label={t('language')}
-                >
-                    {Object.entries(languageOptions).map(([key, value]) => (
-                        <MenuItem key={key} value={key}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {language === key && <CheckIcon sx={{ color: 'green', fontSize: 'medium' }} />} {/* Check más grande */}
-                                <Chip label={value} variant="outlined" size="small" />
-                            </Box>
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-        </Box>
+        <div className="mt-6 p-4 bg-white rounded shadow-lg shadow-black/5 max-w-xs mx-auto border border-gray-200">
+            <h2 className="text-lg text-gray-900 mb-3">{t('language_selection')}</h2>
+            <select
+                value={language}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded border border-gray-300 bg-white focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/20"
+            >
+                {Object.entries(languageOptions).map(([key, value]) => (
+                    <option key={key} value={key}>
+                        {language === key ? '✓ ' : ''}{value}
+                    </option>
+                ))}
+            </select>
+        </div>
     );
 }
 
