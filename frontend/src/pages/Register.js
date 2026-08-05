@@ -182,33 +182,35 @@ export default function Register() {
                     autoFocus
                     error={!!error}
                     helperText={error ? error : ""}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Person sx={{ color: "#4CAF50" }} />
-                        </InputAdornment>
-                      ),
-                      sx: {
-                        borderRadius: 3,
-                        backgroundColor: "rgba(248, 249, 250, 0.8)",
-                        border: "2px solid transparent",
-                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.9)",
-                          borderColor: "rgba(76, 175, 80, 0.3)",
-                          boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
-                        },
-                        "&.Mui-focused": {
-                          backgroundColor: "white",
-                          borderColor: "#4CAF50",
-                          boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Person sx={{ color: "#4CAF50" }} />
+                          </InputAdornment>
+                        ),
+                        sx: {
+                          borderRadius: 3,
+                          backgroundColor: "rgba(248, 249, 250, 0.8)",
+                          border: "2px solid transparent",
+                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            borderColor: "rgba(76, 175, 80, 0.3)",
+                            boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
+                          },
+                          "&.Mui-focused": {
+                            backgroundColor: "white",
+                            borderColor: "#4CAF50",
+                            boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
+                          },
                         },
                       },
-                    }}
-                    InputLabelProps={{
-                      sx: {
-                        "&.Mui-focused": {
-                          color: "#4CAF50",
+                      inputLabel: {
+                        sx: {
+                          "&.Mui-focused": {
+                            color: "#4CAF50",
+                          },
                         },
                       },
                     }}
@@ -225,33 +227,35 @@ export default function Register() {
                     autoComplete="family-name"
                     error={!!error}
                     helperText={error ? error : ""}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Person sx={{ color: "#4CAF50" }} />
-                        </InputAdornment>
-                      ),
-                      sx: {
-                        borderRadius: 3,
-                        backgroundColor: "rgba(248, 249, 250, 0.8)",
-                        border: "2px solid transparent",
-                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.9)",
-                          borderColor: "rgba(76, 175, 80, 0.3)",
-                          boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
-                        },
-                        "&.Mui-focused": {
-                          backgroundColor: "white",
-                          borderColor: "#4CAF50",
-                          boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Person sx={{ color: "#4CAF50" }} />
+                          </InputAdornment>
+                        ),
+                        sx: {
+                          borderRadius: 3,
+                          backgroundColor: "rgba(248, 249, 250, 0.8)",
+                          border: "2px solid transparent",
+                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            borderColor: "rgba(76, 175, 80, 0.3)",
+                            boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
+                          },
+                          "&.Mui-focused": {
+                            backgroundColor: "white",
+                            borderColor: "#4CAF50",
+                            boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
+                          },
                         },
                       },
-                    }}
-                    InputLabelProps={{
-                      sx: {
-                        "&.Mui-focused": {
-                          color: "#4CAF50",
+                      inputLabel: {
+                        sx: {
+                          "&.Mui-focused": {
+                            color: "#4CAF50",
+                          },
                         },
                       },
                     }}
@@ -268,33 +272,35 @@ export default function Register() {
                     autoComplete="email"
                     error={!!error}
                     helperText={error ? error : ""}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email sx={{ color: "#4CAF50" }} />
-                        </InputAdornment>
-                      ),
-                      sx: {
-                        borderRadius: 3,
-                        backgroundColor: "rgba(248, 249, 250, 0.8)",
-                        border: "2px solid transparent",
-                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.9)",
-                          borderColor: "rgba(76, 175, 80, 0.3)",
-                          boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
-                        },
-                        "&.Mui-focused": {
-                          backgroundColor: "white",
-                          borderColor: "#4CAF50",
-                          boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Email sx={{ color: "#4CAF50" }} />
+                          </InputAdornment>
+                        ),
+                        sx: {
+                          borderRadius: 3,
+                          backgroundColor: "rgba(248, 249, 250, 0.8)",
+                          border: "2px solid transparent",
+                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            borderColor: "rgba(76, 175, 80, 0.3)",
+                            boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
+                          },
+                          "&.Mui-focused": {
+                            backgroundColor: "white",
+                            borderColor: "#4CAF50",
+                            boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
+                          },
                         },
                       },
-                    }}
-                    InputLabelProps={{
-                      sx: {
-                        "&.Mui-focused": {
-                          color: "#4CAF50",
+                      inputLabel: {
+                        sx: {
+                          "&.Mui-focused": {
+                            color: "#4CAF50",
+                          },
                         },
                       },
                     }}
@@ -314,49 +320,51 @@ export default function Register() {
                     onChange={(e) => setPassword(e.target.value)}
                     error={!!error}
                     helperText={error ? error : ""}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock sx={{ color: "#4CAF50" }} />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={() => setShowPassword(!showPassword)}
-                            sx={{
-                              color: "#4CAF50",
-                              "&:hover": {
-                                backgroundColor: "rgba(76, 175, 80, 0.08)",
-                              },
-                            }}
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                      sx: {
-                        borderRadius: 3,
-                        backgroundColor: "rgba(248, 249, 250, 0.8)",
-                        border: "2px solid transparent",
-                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.9)",
-                          borderColor: "rgba(76, 175, 80, 0.3)",
-                          boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
-                        },
-                        "&.Mui-focused": {
-                          backgroundColor: "white",
-                          borderColor: "#4CAF50",
-                          boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock sx={{ color: "#4CAF50" }} />
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={() => setShowPassword(!showPassword)}
+                              sx={{
+                                color: "#4CAF50",
+                                "&:hover": {
+                                  backgroundColor: "rgba(76, 175, 80, 0.08)",
+                                },
+                              }}
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                        sx: {
+                          borderRadius: 3,
+                          backgroundColor: "rgba(248, 249, 250, 0.8)",
+                          border: "2px solid transparent",
+                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            borderColor: "rgba(76, 175, 80, 0.3)",
+                            boxShadow: "0 4px 15px rgba(76, 175, 80, 0.1)",
+                          },
+                          "&.Mui-focused": {
+                            backgroundColor: "white",
+                            borderColor: "#4CAF50",
+                            boxShadow: "0 4px 20px rgba(76, 175, 80, 0.2)",
+                          },
                         },
                       },
-                    }}
-                    InputLabelProps={{
-                      sx: {
-                        "&.Mui-focused": {
-                          color: "#4CAF50",
+                      inputLabel: {
+                        sx: {
+                          "&.Mui-focused": {
+                            color: "#4CAF50",
+                          },
                         },
                       },
                     }}
@@ -376,53 +384,55 @@ export default function Register() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     error={!passwordsMatch}
                     helperText={!passwordsMatch ? "Las contraseñas no coinciden" : ""}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          {passwordsMatch && confirmPassword ? (
-                            <CheckCircle sx={{ color: "#4CAF50" }} />
-                          ) : (
-                            <Lock sx={{ color: !passwordsMatch ? "#f44336" : "#4CAF50" }} />
-                          )}
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle confirm password visibility"
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            sx={{
-                              color: "#4CAF50",
-                              "&:hover": {
-                                backgroundColor: "rgba(76, 175, 80, 0.08)",
-                              },
-                            }}
-                          >
-                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                      sx: {
-                        borderRadius: 3,
-                        backgroundColor: "rgba(248, 249, 250, 0.8)",
-                        border: `2px solid ${!passwordsMatch ? "#f44336" : "transparent"}`,
-                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.9)",
-                          borderColor: !passwordsMatch ? "#f44336" : "rgba(76, 175, 80, 0.3)",
-                          boxShadow: `0 4px 15px ${!passwordsMatch ? "rgba(244, 67, 54, 0.1)" : "rgba(76, 175, 80, 0.1)"}`,
-                        },
-                        "&.Mui-focused": {
-                          backgroundColor: "white",
-                          borderColor: !passwordsMatch ? "#f44336" : "#4CAF50",
-                          boxShadow: `0 4px 20px ${!passwordsMatch ? "rgba(244, 67, 54, 0.2)" : "rgba(76, 175, 80, 0.2)"}`,
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            {passwordsMatch && confirmPassword ? (
+                              <CheckCircle sx={{ color: "#4CAF50" }} />
+                            ) : (
+                              <Lock sx={{ color: !passwordsMatch ? "#f44336" : "#4CAF50" }} />
+                            )}
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle confirm password visibility"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              sx={{
+                                color: "#4CAF50",
+                                "&:hover": {
+                                  backgroundColor: "rgba(76, 175, 80, 0.08)",
+                                },
+                              }}
+                            >
+                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                        sx: {
+                          borderRadius: 3,
+                          backgroundColor: "rgba(248, 249, 250, 0.8)",
+                          border: `2px solid ${!passwordsMatch ? "#f44336" : "transparent"}`,
+                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                          "&:hover": {
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            borderColor: !passwordsMatch ? "#f44336" : "rgba(76, 175, 80, 0.3)",
+                            boxShadow: `0 4px 15px ${!passwordsMatch ? "rgba(244, 67, 54, 0.1)" : "rgba(76, 175, 80, 0.1)"}`,
+                          },
+                          "&.Mui-focused": {
+                            backgroundColor: "white",
+                            borderColor: !passwordsMatch ? "#f44336" : "#4CAF50",
+                            boxShadow: `0 4px 20px ${!passwordsMatch ? "rgba(244, 67, 54, 0.2)" : "rgba(76, 175, 80, 0.2)"}`,
+                          },
                         },
                       },
-                    }}
-                    InputLabelProps={{
-                      sx: {
-                        "&.Mui-focused": {
-                          color: !passwordsMatch ? "#f44336" : "#4CAF50",
+                      inputLabel: {
+                        sx: {
+                          "&.Mui-focused": {
+                            color: !passwordsMatch ? "#f44336" : "#4CAF50",
+                          },
                         },
                       },
                     }}

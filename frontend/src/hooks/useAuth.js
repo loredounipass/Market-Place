@@ -1,11 +1,11 @@
-import { useState, useContext } from 'react';
+import { useState, use } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import User from '../services/user';
 
 export default function useAuth() {
     const navigate = useNavigate();
-    const { setAuth } = useContext(AuthContext);
+    const { setAuth } = use(AuthContext);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
     const setUserContext = async () => {
@@ -25,8 +25,8 @@ export default function useAuth() {
     const logoutUser = async () => {
         try {
             await User.logout();
-            localStorage.clear();
-            navigate('/login');
+            setAuth(null);
+            window.location.reload();
         } catch (err) {
             setError(err.message);
         }
@@ -38,7 +38,7 @@ export default function useAuth() {
             if (data) {
                 navigate('/login');
             } else {
-                setError(data.error);
+                setError(data?.error || data?.message);
             }
         } catch (err) {
             setError(err.message);
@@ -48,140 +48,177 @@ export default function useAuth() {
     const loginUser = async (body) => {
         try {
             const { data } = await User.login(body);
-            if (data && 'msg' in data) {
-                if (data.msg === 'Código de verificación enviado a tu correo electrónico.') {
-                    navigate('/verifytoken');
-                } else if (data.msg === 'Logged in!') {
+            if (data && ('msg' in data || 'message' in data)) {
+                if (data.msg === 'Logged in!' || data.message === 'Logged in!') {
                     await setUserContext();
-                } else {
-                    setError(data.error);
+                    window.location.reload();
                 }
+                return data;
             } else {
-                setError('Credenciales incorrectas.');
+                setError(data?.error || data?.message);
+                return null;
             }
         } catch (err) {
-            setError('Credenciales incorrectas.');
+            setError(err.message);
+            return null;
         }
     };
 
     const verifyToken = async (body) => {
         try {
             const { data } = await User.verifyToken(body);
-            if (data && data.msg === 'Logged in!') {
+            if (data && (data.msg === 'Logged in!' || data.message === 'Logged in!')) {
                 await setUserContext();
-            } else if (data && data.msg === 'Código de verificación enviado a tu correo electrónico.') {
+                return true;
+            } else if (data && (data.msg || data.message)) {
                 return data;
             } else {
-                setError(data.error || 'Código de verificación inválido.');
+                const errorMessage = data?.error || data?.message || i18n.t('2fa_error_verify');
+                setError(errorMessage);
+                return { error: errorMessage };
             }
         } catch (err) {
-            setError('Token incorrecto verifica tu correo electrónico.');
+            const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message;
+            setError(errorMessage);
+            return { error: errorMessage };
         }
     };
 
     const resendToken = async (body) => {
         try {
             const { data } = await User.resendToken(body);
-            if (data && data.message === 'Código de verificación reenviado a tu correo electrónico.') {
-                setSuccessMessage(data.message);
+            if (data && (data.message || data.msg)) {
+                setSuccessMessage(data.message || data.msg);
+                return { success: true, message: data.message || data.msg };
             } else {
-                setError(data.error || 'Error al reenviar el código de verificación.');
+                setError(data?.error || data?.message);
+                return { error: data?.error || data?.message };
             }
         } catch (err) {
             setError(err.message);
+            return { error: err.message };
         }
     };
 
     const changePassword = async (body) => {
         try {
             const { data } = await User.changePassword(body);
-            if (data && data.message === 'Contraseña actualizada con éxito') {
-                setSuccessMessage('Contraseña actualizada con éxito');
+            if (data && (data.message || data.msg)) {
+                setSuccessMessage(data.message || data.msg);
+                try {
+                    const infoResp = await User.getInfo();
+                    const user = infoResp?.data?.data;
+                    if (user) setAuth(user);
+                } catch (err) {
+                    // ignore refresh errors
+                }
+                return { success: true, message: data.message || data.msg };
             } else {
-                setError(data.error || 'Error al cambiar la contraseña.');
+                setError(data?.error || data?.message);
+                return { error: data?.error || data?.message };
             }
         } catch (err) {
             setError(err.message);
+            return { error: err.message };
         }
     };
 
     const updateTokenStatus = async (body) => {
         try {
-            const { data } = await User.updateTokenStatus(body);
-            if (data && data.msg === 'Seguridad de la cuenta actualizada con éxito.') {
-                setSuccessMessage('Seguridad de la cuenta actualizada con éxito.');
-            } else {
-                setError(data.error || 'Error al actualizar el estado de seguridad.');
+            const response = await User.updateTokenStatus(body);
+            const { data } = response || {};
+            if (data && (data.message || data.msg)) {
+                setSuccessMessage(data.message || data.msg);
+            } else if (data?.error) {
+                setError(data.error);
             }
+            return data;
         } catch (err) {
             setError(err.message);
+            return null;
         }
     };
 
     const updateUserProfile = async (body) => {
         try {
             const { data } = await User.updateProfile(body);
-            if (data && data.message === 'Perfil actualizado con éxito') {
-                setSuccessMessage(data.message);
+            if (data && (data.message || data.msg)) {
+                setSuccessMessage(data.message || data.msg);
+                try {
+                    const infoResp = await User.getInfo();
+                    const user = infoResp?.data?.data;
+                    if (user) setAuth(user);
+                } catch (err) {
+                    // ignore refresh errors; UI will still show success
+                }
+                return { success: true, message: data.message || data.msg };
             } else {
-                setError(data.error || 'Error al actualizar el perfil.');
+                setError(data?.error || data?.message);
+                return { error: data?.error || data?.message };
             }
         } catch (err) {
-            setError(err.response?.data?.message || err.message);
+            setError(err.message);
+            return { error: err.message };
         }
     };
 
-    const verifyEmail = async (email) => {
+    const verifyEmail = async (token) => {
         try {
-            const { data } = await User.verifyEmail({ email });
-            if (data && data.message === 'Correo electrónico verificado con éxito.') {
-                setSuccessMessage(data.message);
+            const { data } = await User.verifyEmail({ token });
+            if (data && (data.message || data.msg)) {
+                setSuccessMessage(data.message || data.msg);
+                return { success: true, message: data.message || data.msg };
             } else {
-                setError(data.error || 'Error: el correo ya está verificado.');
+                setError(data?.error || data?.message);
+                return { error: data?.error || data?.message };
             }
         } catch (err) {
             setError(err.message);
+            return { error: err.message };
         }
     };
-    
-    const sendVerificationEmail = async (email) => {
+
+    const sendVerificationEmail = async () => {
         try {
-            const { data } = await User.sendVerificationEmail({ email });
-            if (data && data.message === 'Correo de verificación enviado con éxito.') {
-                setSuccessMessage(data.message);
+            const { data } = await User.sendVerificationEmail({});
+            if (data && (data.message || data.msg)) {
+                setSuccessMessage(data.message || data.msg);
+                return { success: true, message: data.message || data.msg };
             } else {
-                setError(data.error || 'Error al enviar el correo de verificación.');
+                setError(data?.error || data?.message);
+                return { error: data?.error || data?.message };
             }
         } catch (err) {
             setError(err.message);
+            return { error: err.message };
         }
     };
-    
+
     const isEmailVerified = async () => {
         try {
-            const { data } = await User.isEmailVerified(); 
+            const { data } = await User.isEmailVerified();
             if (data && data.isVerified) {
-                return true; 
+                return true;
             } else {
-                return false; 
+                return false;
             }
         } catch (err) {
             setError(err.message);
-            return false; 
+            return false;
         }
     };
-    
+
 
     return {
         registerUser,
         loginUser,
         logoutUser,
         verifyToken,
-        resendToken, 
+        resendToken,
         changePassword,
         updateTokenStatus,
         updateUserProfile,
-        verifyEmail,          
+        verifyEmail,
         sendVerificationEmail,
         isEmailVerified,
         error,
