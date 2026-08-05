@@ -53,9 +53,23 @@ export class ProductService {
     }
   }
 
-  async getAllProducts(): Promise<any[]> {
+  async getAllProducts(query?: string): Promise<any[]> {
     try {
-      const products = await this.productModel.aggregate([
+      const pipeline: any[] = [];
+      
+      if (query) {
+        pipeline.push({
+          $match: {
+            $or: [
+              { name: { $regex: query, $options: 'i' } },
+              { category: { $regex: query, $options: 'i' } },
+              { description: { $regex: query, $options: 'i' } }
+            ]
+          }
+        });
+      }
+
+      pipeline.push(
         {
           $lookup: {
             from: 'users',
@@ -75,8 +89,10 @@ export class ProductService {
             updatedAt: 1,
             category: 1, 
           },
-        },
-      ]);
+        }
+      );
+      
+      const products = await this.productModel.aggregate(pipeline);
       if (!products || products.length === 0) {
         return [{ message: 'Aún no hay productos.' }];
       }

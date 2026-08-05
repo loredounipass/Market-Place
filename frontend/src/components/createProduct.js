@@ -42,7 +42,7 @@ function CreateProduct() {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0]
     if (file) {
-      ;(async () => {
+      ; (async () => {
         try {
           const resized = await resizeAndCropImage(file, 1000)
           setPhoto(resized)
@@ -100,17 +100,27 @@ function CreateProduct() {
       reader.readAsDataURL(file)
     })
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!name || !photo || !price || !description || !auth?.email || !category) {
-      setToastMessage("Por favor, completa todos los campos.")
+  const submitProduct = async () => {
+    const userEmail = auth?.email || localStorage.getItem("email")
+
+    const missingFields = []
+    if (!name) missingFields.push("Nombre")
+    if (!category) missingFields.push("Categoría")
+    if (!price) missingFields.push("Precio")
+    if (!description) missingFields.push("Descripción")
+    if (!photo) missingFields.push("Imagen")
+    if (!userEmail) missingFields.push("Email de usuario")
+
+    if (missingFields.length > 0) {
+      setToastMessage(`Faltan campos: ${missingFields.join(", ")}`)
       setToastSeverity("error")
       setToastOpen(true)
       return
     }
+
     const formData = new FormData()
     formData.append("name", name)
-    formData.append("email", auth.email)
+    formData.append("email", userEmail)
     formData.append("photo", photo)
     formData.append("price", price)
     formData.append("description", description)
@@ -338,9 +348,8 @@ function CreateProduct() {
               <li key={label} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
-                      index <= activeStep ? "bg-green-500 text-white shadow-lg shadow-green-500/30" : "bg-gray-100 text-gray-500"
-                    }`}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${index <= activeStep ? "bg-green-500 text-white shadow-lg shadow-green-500/30" : "bg-gray-100 text-gray-500"
+                      }`}
                   >
                     {index < activeStep ? "✓" : index + 1}
                   </div>
@@ -356,7 +365,7 @@ function CreateProduct() {
           </ol>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={(e) => e.preventDefault()} noValidate>
           <div className="bg-white p-6 rounded-2xl shadow-lg shadow-black/5 mb-6 animate-fadeIn" key={activeStep}>
             {getStepContent(activeStep)}
           </div>
@@ -383,7 +392,8 @@ function CreateProduct() {
                   </button>
                 ) : (
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={submitProduct}
                     disabled={loading}
                     className="px-8 py-2.5 rounded-xl bg-green-500 text-white font-bold text-lg shadow-lg shadow-green-500/30 hover:bg-green-600 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-green-500/40 transition-all disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
                   >
@@ -415,11 +425,10 @@ function CreateProduct() {
       {toastOpen && (
         <div className="fixed bottom-6 right-6 z-50 animate-slideUp" role="alert">
           <div
-            className={`flex items-center px-6 py-4 rounded-xl shadow-2xl border ${
-              toastSeverity === "success"
+            className={`flex items-center px-6 py-4 rounded-xl shadow-2xl border ${toastSeverity === "success"
                 ? "bg-green-500 text-white border-green-400"
                 : "bg-red-500 text-white border-red-400"
-            }`}
+              }`}
           >
             <span className="font-medium">{toastMessage}</span>
             <button onClick={() => setToastOpen(false)} className="ml-4 text-white/80 hover:text-white transition-opacity" aria-label="Cerrar">

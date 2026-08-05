@@ -13,7 +13,7 @@ function DashboardContent() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { logoutUser } = useAuth()
   const navigate = useNavigate()
-  const { products, loading, error } = useProducts()
+  const { products, loading, error, getProducts } = useProducts()
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [primaryCategory, setPrimaryCategory] = useState({ value: "all", label: "Todos" })
   const [anchorOverflow, setAnchorOverflow] = useState(null)
@@ -141,19 +141,12 @@ function DashboardContent() {
   const handleSearch = () => {
     setSubmittedKeyword(searchKeyword)
     setCurrentPage(1)
+    getProducts(searchKeyword)
   }
 
   const filteredProducts = selectedCategory === "all" ? products : products.filter((product) => product.category === selectedCategory)
 
-  const searchFilteredProducts = filteredProducts.filter((product) => {
-    const key = submittedKeyword.toLowerCase()
-    if (!key) return true
-    const name = product.name?.toLowerCase() || ""
-    const description = product.description?.toLowerCase() || ""
-    return name.includes(key) || description.includes(key)
-  })
-
-  const sortedProducts = [...searchFilteredProducts].sort((a, b) => a.name.localeCompare(b.name))
+  const sortedProducts = [...filteredProducts].sort((a, b) => (a.name || "").localeCompare(b.name || ""))
 
   const productsPerPage = 12
   const totalPages = Math.ceil(sortedProducts.length / productsPerPage)
@@ -323,7 +316,7 @@ function DashboardContent() {
         </div>
       )}
 
-      <main className="pt-20 lg:pt-24 animate-fadeIn">
+      <main className="h-screen overflow-y-auto pt-20 lg:pt-24 pb-12 animate-fadeIn bg-gradient-to-br from-green-50 to-green-100">
         <section className="py-8 px-4 text-center" aria-labelledby="catalog-title">
           <h2 id="catalog-title" className="mb-3 text-3xl font-black bg-gradient-to-r from-green-800 to-green-600 bg-clip-text text-transparent animate-fadeInUp">
             Catálogo

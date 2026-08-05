@@ -8,6 +8,7 @@ import {
   Request,
   UseGuards,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from '../products/products.service';
@@ -37,7 +38,7 @@ export class ProductController {
 
   @UseGuards(AuthenticatedGuard)
   @Get('all')
-  async findAll(@Request() req): Promise<any[]> {
-    return this.productService.getAllProducts();
+  async findAll(@Request() req, @Query('q') q?: string): Promise<any[]> {
+    return this.productService.getAllProducts(q);
   }
 }

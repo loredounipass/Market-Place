@@ -6,11 +6,10 @@ export default function useProducts() {
     const [loading, setLoading] = useState(false); 
     const [error, setError] = useState(null);
 
-   
-    const getProducts = async () => {
+    const getProducts = async (query = "") => {
         setLoading(true);
         try {
-            const response = await Products.getProducts(); 
+            const response = await Products.getProducts(query); 
             if (response.data && Array.isArray(response.data)) {
                 setProducts(response.data); 
             } else {

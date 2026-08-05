@@ -6,7 +6,8 @@ export default class Products {
         return await post(createProductApi, body);
     }
 
-    static async getProducts() {
-        return await get(getProductsApi, {});
+    static async getProducts(query = "") {
+        const url = query ? `${getProductsApi}?q=${encodeURIComponent(query)}` : getProductsApi;
+        return await get(url, {});
     }
 }
