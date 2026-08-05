@@ -149,7 +149,7 @@ export default function Navbar() {
         </div>
       )}
 
-      <div className="pt-16 lg:pt-20 min-h-screen" />
+      <div className="pt-16 lg:pt-20" />
     </>
   )
 }

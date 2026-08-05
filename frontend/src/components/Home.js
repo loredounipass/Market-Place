@@ -319,7 +319,7 @@ function DashboardContent() {
           </p>
         </section>
 
-        <section className="px-4 sm:px-6 lg:px-8 mb-8 animate-fadeInUp delay-200 flex-shrink-0" aria-labelledby="search-title">
+        <section className="px-4 sm:px-6 lg:px-8 mb-8 animate-fadeInUp delay-200 " aria-labelledby="search-title">
           <div className="max-w-3xl mx-auto">
             <div className="relative">
               <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -413,7 +413,7 @@ function DashboardContent() {
         </section>
 
         <section className="px-4 sm:px-6 lg:px-8 animate-fadeInUp delay-400 flex-1 min-h-0" aria-labelledby="products-title">
-          <div className="h-full overflow-auto custom-scrollbar">
+          <div>
             {loading ? (
               <div className="py-20 text-center">
                 <p className="text-xl text-gray-500">Cargando productos...</p>
@@ -549,20 +549,7 @@ function DashboardContent() {
       </main>
 
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0,0,0,0.05);
-          border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
-          border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(135deg, #388E3C 0%, #4CAF50 100%);
-        }
+
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(30px); }
           to { opacity: 1; transform: translateY(0); }

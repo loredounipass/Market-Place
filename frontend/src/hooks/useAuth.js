@@ -222,6 +222,7 @@ export default function useAuth() {
         sendVerificationEmail,
         isEmailVerified,
         error,
+        setError,
         successMessage
     };
 }

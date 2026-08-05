@@ -43,7 +43,7 @@ const TwoFactorAuthComponent = () => {
 
   const updateTokenStatusAndLocalStorage = async (newStatus) => {
     try {
-      await updateTokenStatus({ email: auth.email, isTokenEnabled: newStatus });
+      await updateTokenStatus({ isTokenEnabled: newStatus });
       setIsTokenEnabled(newStatus);
       localStorage.setItem('isTokenEnabled', newStatus);
 
