@@ -89,7 +89,7 @@ export default function Navbar() {
               aria-label="Configuración de usuario"
             >
               <div 
-                className="w-10 h-10 rounded-full font-bold text-white border-3 border-white/30 flex items-center justify-center"
+                className="w-8 h-8 rounded-full font-bold text-white text-sm border-2 border-white/30 flex items-center justify-center"
                 style={{ background: `linear-gradient(135deg, ${getAvatarColor(auth.firstName)} 0%, ${getAvatarColor(auth.firstName)}CC 100%)` }}
               >
                 {auth.firstName.charAt(0)}

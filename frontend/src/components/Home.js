@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState, useEffect } from "react"
+import { useContext, useState, useEffect, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import CartDrawer from "./Cart"
 import useAuth from "../hooks/useAuth"
@@ -25,6 +25,7 @@ function DashboardContent() {
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
   const [toastSeverity, setToastSeverity] = useState("success")
+  const userMenuRef = useRef(null)
 
   useEffect(() => {
     try {
@@ -45,6 +46,19 @@ function DashboardContent() {
       console.warn("Failed to save cart to localStorage", e)
     }
   }, [cartItems])
+
+  useEffect(() => {
+    if (!anchorElUser) return
+
+    const handlePointerDown = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setAnchorElUser(null)
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown)
+    return () => document.removeEventListener("mousedown", handlePointerDown)
+  }, [anchorElUser])
 
   const handleCloseUserMenu = () => setAnchorElUser(null)
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget)
@@ -225,14 +239,14 @@ function DashboardContent() {
 
           {renderNavLinks()}
 
-          <div className="relative">
+          <div className="relative" data-user-menu-root ref={userMenuRef}>
             <button
               onClick={handleOpenUserMenu}
               className="p-0"
               aria-label="Configuración de usuario"
             >
               <div
-                className="w-11 h-11 rounded-full font-bold text-white border-3 border-white/30 flex items-center justify-center shadow-lg shadow-black/20 transition-all duration-300 hover:scale-115 hover:shadow-xl hover:shadow-black/30"
+                className="w-8 h-8 rounded-full font-bold text-white text-sm border-2 border-white/30 flex items-center justify-center shadow-lg shadow-black/20 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-black/30"
                 style={{ background: `linear-gradient(135deg, ${getAvatarColor(auth.firstName)} 0%, ${getAvatarColor(auth.firstName)}CC 100%)` }}
               >
                 {auth.firstName.charAt(0)}
@@ -269,8 +283,8 @@ function DashboardContent() {
         {toastOpen && (
           <div
             className={`flex items-center px-6 py-4 rounded-xl shadow-2xl border transition-all duration-300 ${toastSeverity === "success"
-                ? "bg-green-600 text-white border-green-500"
-                : "bg-yellow-600 text-white border-yellow-500"
+              ? "bg-green-600 text-white border-green-500"
+              : "bg-yellow-600 text-white border-yellow-500"
               }`}
           >
             <span className="font-medium">{toastMessage}</span>
@@ -311,11 +325,11 @@ function DashboardContent() {
 
       <main className="pt-20 lg:pt-24 animate-fadeIn">
         <section className="py-8 px-4 text-center" aria-labelledby="catalog-title">
-          <h2 id="catalog-title" className="mb-3 text-4xl font-black bg-gradient-to-r from-green-800 to-green-600 bg-clip-text text-transparent animate-fadeInUp">
-            Catálogo de Productos
+          <h2 id="catalog-title" className="mb-3 text-3xl font-black bg-gradient-to-r from-green-800 to-green-600 bg-clip-text text-transparent animate-fadeInUp">
+            Catálogo
           </h2>
-          <p className="text-xl text-gray-600 font-medium animate-fadeInUp delay-100">
-            Encuentra el producto que buscas en nuestra cuidada selección
+          <p className="text-base text-gray-600 font-medium animate-fadeInUp delay-100">
+            Busca lo que necesitas.
           </p>
         </section>
 
@@ -358,8 +372,8 @@ function DashboardContent() {
                       key={value}
                       onClick={() => handleCategoryChange(value)}
                       className={`px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 shadow-lg ${selectedCategory === value
-                          ? "bg-gradient-to-r from-green-600 to-green-400 text-white shadow-green-500/40 scale-105"
-                          : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
+                        ? "bg-gradient-to-r from-green-600 to-green-400 text-white shadow-green-500/40 scale-105"
+                        : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
                         }`}
                     >
                       {label}
@@ -504,8 +518,8 @@ function DashboardContent() {
                     onClick={() => setCurrentPage(currentPage - 1)}
                     disabled={currentPage === 1}
                     className={`px-5 py-2.5 rounded-xl font-bold text-base transition-all duration-300 ${currentPage === 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
                       }`}
                   >
                     Atrás
@@ -518,8 +532,8 @@ function DashboardContent() {
                         key={page}
                         onClick={() => setCurrentPage(page)}
                         className={`w-12 h-12 rounded-xl font-bold transition-all duration-300 ${page === currentPage
-                            ? "bg-gradient-to-r from-green-600 to-green-400 text-white shadow-lg shadow-green-500/40 scale-110 font-black"
-                            : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
+                          ? "bg-gradient-to-r from-green-600 to-green-400 text-white shadow-lg shadow-green-500/40 scale-110 font-black"
+                          : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
                           }`}
                       >
                         {page}
@@ -531,8 +545,8 @@ function DashboardContent() {
                     onClick={() => setCurrentPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
                     className={`px-5 py-2.5 rounded-xl font-bold text-base transition-all duration-300 ${currentPage === totalPages
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white/95 backdrop-blur-xl text-green-800 border-2 border-green-200 shadow-lg shadow-green-500/10 hover:bg-green-50 hover:border-green-300 hover:shadow-xl hover:shadow-green-500/20 hover:scale-105 hover:-translate-y-1"
                       }`}
                   >
                     Next
