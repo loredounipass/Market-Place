@@ -31,7 +31,7 @@ import {
   Chip,
   Fade,
 } from "@mui/material"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import {
   Menu as MenuIcon,
   ExitToApp as LogoutIcon,
@@ -301,7 +301,7 @@ function DashboardContent() {
   const [anchorElUser, setAnchorElUser] = useState(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { logoutUser } = useAuth()
-  const history = useHistory()
+  const navigate = useNavigate()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
   const { products, loading, error } = useProducts()

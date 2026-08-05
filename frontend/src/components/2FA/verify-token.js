@@ -2,15 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Typography, Box, Button, TextField, Grid, Alert, Container, CircularProgress } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import RefreshIcon from '@mui/icons-material/Refresh'; 
-import { useHistory } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const VerifyToken = () => {
     const [formValues, setFormValues] = useState({ token: '' });
     const { verifyToken, error } = useAuth();
     const [loading, setLoading] = useState(false);
     const [localError, setLocalError] = useState(null); 
-    const history = useHistory();
+    const navigate = useNavigate();
     const isMounted = useRef(true);
 
     useEffect(() => {
@@ -37,7 +37,7 @@ const VerifyToken = () => {
             try {
                 const response = await verifyToken({ email: storedEmail, ...formValues });
                 if (isMounted.current && response?.msg === 'Logged in!') {
-                    history.push('/');
+                    navigate('/');
                 }
             } catch (err) {
             } finally {
@@ -47,7 +47,7 @@ const VerifyToken = () => {
     };
 
     const handleResend = () => {
-        history.push('/resendtoken');
+        navigate('/resendtoken');
     };
 
     return (

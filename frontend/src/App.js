@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthContext } from './hooks/AuthContext'
 import useFindUser from './hooks/useFindUser'
 
@@ -45,16 +45,16 @@ export default function App() {
                         >
                             <Toolbar />
                             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                                <Switch>
-                                    <PrivateRoute exact path='/' component={Home} />
-                                    <PrivateRoute exact path='/settings' component={Settings}/>
-                                    <PrivateRoute exact path='/create' component={CreateProduct}/>
-                                    <PrivateRoute exact path='/verifyemail' component={EmailVerificationComponent}/>
-                                    <PublicRoute exact path='/login' component={Login} />
-                                    <PublicRoute exact path='/register' component={Register} />
-                                    <PublicRoute exact path='/verifytoken' component={VerifyToken} />
-                                    <PublicRoute exact path='/resendtoken' component={ResendTokenForm}/>
-                                </Switch>
+                                <Routes>
+                                    <Route path='/' element={<PrivateRoute component={Home} />} />
+                                    <Route path='/settings' element={<PrivateRoute component={Settings} />} />
+                                    <Route path='/create' element={<PrivateRoute component={CreateProduct} />} />
+                                    <Route path='/verifyemail' element={<PrivateRoute component={EmailVerificationComponent} />} />
+                                    <Route path='/login' element={<PublicRoute component={Login} />} />
+                                    <Route path='/register' element={<PublicRoute component={Register} />} />
+                                    <Route path='/verifytoken' element={<PublicRoute component={VerifyToken} />} />
+                                    <Route path='/resendtoken' element={<PublicRoute component={ResendTokenForm} />} />
+                                </Routes>
                                 
                             </Container>
                         </Box>

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../../hooks/AuthContext';
 
 export default function PublicRoute(props) {
@@ -7,16 +7,12 @@ export default function PublicRoute(props) {
     const { component: Component, ...rest } = props;
 
     if (loading) {
-        return <></>
+        return <></>;
     }
 
     if (!auth) {
-        return (<Route {...rest} render={(props) =>
-            (<Component {...props} />)
-        }
-        />
-        )
+        return <Component {...rest} />;
     }
 
-    return <Redirect to='/' />
+    return <Navigate to='/' replace />;
 }

@@ -19,12 +19,12 @@ import {
   Slide,
 } from "@mui/material"
 import { Visibility, VisibilityOff, ShoppingBag, Email, Lock, Login as LoginIcon } from "@mui/icons-material"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 
 export default function Login() {
   const { loginUser, error } = useAuth()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -43,9 +43,9 @@ export default function Login() {
       const responseMessage = await loginUser(data)
       if (isMounted.current) {
         if (responseMessage && responseMessage.msg === "Código de verificación enviado a tu correo electrónico.") {
-          history.push("/verifytoken")
+          navigate("/verifytoken")
         } else if (responseMessage && responseMessage.msg === "Logged in!") {
-          history.push("/")
+          navigate("/")
         } else {
           setOpenSnackbar(true)
         }

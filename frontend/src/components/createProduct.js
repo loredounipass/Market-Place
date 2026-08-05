@@ -37,7 +37,7 @@ import {
   ArrowBack,
   Inventory,
 } from "@mui/icons-material"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import useProducts from "../hooks/useProducts"
 import { AuthContext } from "../hooks/AuthContext"
 
@@ -57,7 +57,7 @@ function CreateProduct() {
   const [toastMessage, setToastMessage] = useState("")
   const [toastSeverity, setToastSeverity] = useState("success")
   const [activeStep, setActiveStep] = useState(0)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0]

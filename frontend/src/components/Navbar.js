@@ -21,7 +21,7 @@ import {
   useTheme,
 } from "@mui/material"
 import { Menu as MenuIcon, Settings as SettingsIcon, ExitToApp as LogoutIcon } from "@mui/icons-material"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 import { AuthContext } from "../hooks/AuthContext"
 import { ShoppingBag as ShoppingBagIcon } from "@mui/icons-material"
@@ -40,7 +40,7 @@ export default function Navbar() {
   const { logoutUser } = useAuth()
   const [anchorElUser, setAnchorElUser] = useState(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const history = useHistory()
+  const navigate = useNavigate()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down("md"))
 
@@ -73,7 +73,7 @@ export default function Navbar() {
       await logoutUser()
       window.location.reload()
     } else if (action === "Settings") {
-      history.push("/settings")
+      navigate("/settings")
     }
     setAnchorElUser(null)
     setDrawerOpen(false)

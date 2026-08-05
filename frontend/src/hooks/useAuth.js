@@ -1,10 +1,10 @@
 import { useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import User from '../services/user';
 
 export default function useAuth() {
-    let history = useHistory();
+    const navigate = useNavigate();
     const { setAuth } = useContext(AuthContext);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
@@ -13,7 +13,7 @@ export default function useAuth() {
             const { data } = await User.getInfo();
             if (data && 'data' in data) {
                 setAuth(data.data);
-                history.push('/');
+                navigate('/');
             } else {
                 setError(data.error);
             }
@@ -26,7 +26,7 @@ export default function useAuth() {
         try {
             await User.logout();
             localStorage.clear();
-            history.push('/login');
+            navigate('/login');
         } catch (err) {
             setError(err.message);
         }
@@ -36,7 +36,7 @@ export default function useAuth() {
         try {
             const { data } = await User.register(body);
             if (data) {
-                history.push('/login');
+                navigate('/login');
             } else {
                 setError(data.error);
             }
@@ -50,7 +50,7 @@ export default function useAuth() {
             const { data } = await User.login(body);
             if (data && 'msg' in data) {
                 if (data.msg === 'Código de verificación enviado a tu correo electrónico.') {
-                    history.push('/verifytoken');
+                    navigate('/verifytoken');
                 } else if (data.msg === 'Logged in!') {
                     await setUserContext();
                 } else {
