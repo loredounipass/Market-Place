@@ -171,7 +171,7 @@ export default function Register() {
             {/* Formulario */}
             <Box component="form" noValidate onSubmit={handleSubmit}>
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     autoComplete="given-name"
                     name="firstName"
@@ -217,7 +217,7 @@ export default function Register() {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
                     required
                     fullWidth
@@ -262,7 +262,7 @@ export default function Register() {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid xs={12}>
                   <TextField
                     required
                     fullWidth
@@ -307,7 +307,7 @@ export default function Register() {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid xs={12}>
                   <TextField
                     required
                     fullWidth
@@ -371,7 +371,7 @@ export default function Register() {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid xs={12}>
                   <TextField
                     required
                     fullWidth

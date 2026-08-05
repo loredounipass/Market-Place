@@ -1,7 +1,14 @@
 import axios from 'axios'
+import i18n from '../languages/i18n';
 
 
-const baseApi = process.env.REACT_APP_API_BASE_URL;
+const runtimeOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+const rawBaseApi = (process.env.REACT_APP_API_BASE_URL || runtimeOrigin || '').replace(/\/+$/, '');
+const baseApi = rawBaseApi
+    ? rawBaseApi.includes('/secure/api')
+        ? rawBaseApi
+        : `${rawBaseApi}/secure/api`
+    : '';
 const api = axios.create({
     baseURL: baseApi,
     withCredentials: true,
@@ -39,20 +46,24 @@ api.interceptors.response.use(
 );
 
 // Fetch and set CSRF token globally with retries for startup timing issues
-async function fetchCsrfToken(retries = 5, delayMs = 2000) {
+async function fetchCsrfToken(retries = 3, delayMs = 500) {
     try {
         const response = await axios.get(csrfTokenApi, { withCredentials: true });
-        const { csrfToken } = response.data;
+        const { csrfToken } = response.data || {};
+
         if (csrfToken) {
-            // Attach token to all future requests from this 'api' instance
             api.defaults.headers.common['x-csrf-token'] = csrfToken;
-            console.log('CSRF token fetched successfully');
+            return csrfToken;
         }
+
+        return null;
     } catch (error) {
-        console.error(`Failed to fetch CSRF token. Retries left: ${retries}`);
         if (retries > 0) {
-            setTimeout(() => fetchCsrfToken(retries - 1, delayMs * 1.5), delayMs);
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+            return fetchCsrfToken(retries - 1, delayMs * 1.5);
         }
+
+        return null;
     }
 }
 
@@ -102,18 +113,34 @@ async function getExternal(url, config = {}) {
 }
 
 async function post(url, body) {
+    const csrfToken = await fetchCsrfToken();
+    if (!csrfToken) {
+        throw new Error('No se pudo obtener el token CSRF del backend.');
+    }
     return await api.post(url, body)
 }
 
 async function postMultipart(url, formData) {
+    const csrfToken = await fetchCsrfToken();
+    if (!csrfToken) {
+        throw new Error('No se pudo obtener el token CSRF del backend.');
+    }
     return await api.post(url, formData, { timeout: 120000 })
 }
 
 async function patch(url, body) {
+    const csrfToken = await fetchCsrfToken();
+    if (!csrfToken) {
+        throw new Error('No se pudo obtener el token CSRF del backend.');
+    }
     return await api.patch(url, body)
 }
 
 async function del(url) {
+    const csrfToken = await fetchCsrfToken();
+    if (!csrfToken) {
+        throw new Error('No se pudo obtener el token CSRF del backend.');
+    }
     return await api.delete(url)
 }
 
@@ -145,4 +172,6 @@ export {
     resetPasswordApi,
     createProductApi,
     getProductsApi,
+    languagesApi,
+    userLanguageApi
 };
