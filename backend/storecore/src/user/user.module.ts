@@ -5,8 +5,11 @@ import { HashService } from './hash.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
 import { AuthService } from '../auth/auth.service';
-import { TwoFactorAuthModule } from 'src/two-factor/verification.module';
+import { TwoFactorAuthModule } from '../two-factor/verification.module';
 import { EmailModule } from './email.module';
+import { ForgotPasswordService } from './forgot.password.service';
+import { UserRepository } from '../repositories/user.repository';
+import { EmailThrottlerGuard } from '../guard/auth/email-throttler.guard';
 
 @Module({
   imports: [
@@ -15,14 +18,17 @@ import { EmailModule } from './email.module';
     MongooseModule.forFeature([{
       name: User.name,
       schema: UserSchema
-    }])
+    }]),
   ],
   controllers: [UserController],
   providers: [
+    UserRepository,
     UserService,
     HashService,
-    AuthService
+    AuthService,
+    ForgotPasswordService,
+    EmailThrottlerGuard
   ],
-  exports: [UserService, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])], 
+  exports: [UserService, HashService, UserRepository, MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])], 
 })
 export class UserModule { }

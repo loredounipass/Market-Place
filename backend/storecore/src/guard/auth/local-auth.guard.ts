@@ -5,9 +5,9 @@ import { AuthGuard } from "@nestjs/passport";
 export class LocalAuthGuard extends AuthGuard('local') {
     async canActivate(context: ExecutionContext) {
         const result = (await super.canActivate(context)) as boolean;
-        const request = context.switchToHttp().getRequest();
-
-        await super.logIn(request);
+        // Do not call `logIn` here to avoid creating a session before
+        // two-factor token verification. Session creation is handled
+        // explicitly after successful 2FA verification in the auth service.
         return result;
     }
 }

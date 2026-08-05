@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-export type UserDocument = User & Document;
 
+export type UserDocument = User & Document;
 
 @Schema()
 export class User {
@@ -22,20 +22,61 @@ export class User {
     })
     password: string;
 
-    @Prop({ type: [{ type: Types.ObjectId, ref: 'Product' }] })
+    @Prop({ type: [{ type: Types.ObjectId, ref: 'Wallet' }], default: [] })
+    wallets: Types.ObjectId[];
+
+    @Prop({ type: [{ type: Types.ObjectId, ref: 'Product' }], default: [] })
     products: Types.ObjectId[];
 
     _id?: string; 
 
-    @Prop()
-    token: string;
-
+    // Email verification flag retained for account verification flows
     @Prop({ default: false })
     isValid: boolean;
 
     @Prop({ default: false })
     isTokenEnabled: boolean;
+
+    @Prop({ default: 'es' })
+    language: string;
+    
+    // Email verification fields
+    @Prop()
+    verifyEmailTokenHash?: string;
+
+    @Prop()
+    verifyEmailExpires?: Date;
+
+    // Password reset fields
+    @Prop()
+    resetPasswordTokenHash?: string;
+
+    @Prop()
+    resetPasswordTokenPurpose?: string;
+
+    @Prop({ default: false })
+    resetPasswordTokenUsed?: boolean;
+
+    @Prop()
+    resetPasswordExpires?: Date;
+
+    @Prop()
+    resetPasswordLastSentAt?: number;
+    
+    @Prop()
+    lastPasswordChange?: number;
+    
+    @Prop()
+    lastProfileUpdate?: number;
     
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.set('toJSON', {
+  transform: (_doc: any, ret: any) => {
+    delete ret.password;
+    delete ret.__v;
+    return ret;
+  }
+});

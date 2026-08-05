@@ -43,11 +43,13 @@ export class ProductService {
         category: createProductDto.category, 
       });
       await product.save();
+      user.products = user.products || [];
       user.products.push(product._id);
       await user.save();
       return product;
-    } catch (error) {
-      throw new InternalServerErrorException('Error al crear el producto: ' + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error desconocido';
+      throw new InternalServerErrorException('Error al crear el producto: ' + message);
     }
   }
 
@@ -88,8 +90,9 @@ export class ProductService {
         category: product.category, 
       }));
       return productData;
-    } catch (error) {
-      throw new InternalServerErrorException('Error al obtener los productos: ' + error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error desconocido';
+      throw new InternalServerErrorException('Error al obtener los productos: ' + message);
     }
   }
 }

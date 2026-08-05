@@ -2,9 +2,11 @@ import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validato
 
 export class CreateUserDto {
     @IsString()
+    @MaxLength(50)
     firstName: string;
 
     @IsString()
+    @MaxLength(50)
     lastName: string;
 
     @IsString()
@@ -16,7 +18,7 @@ export class CreateUserDto {
     @MaxLength(50)
     @Matches(
         /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-        message: 'La contraseña debe contener mayúsculas, minúsculas y números'
+        message: 'The password must contain uppercase, lowercase and numbers'
     })
     password: string;
 
