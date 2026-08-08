@@ -16,10 +16,11 @@ const api = axios.create({
 });
 
 const apiOrigin = new URL(baseApi).origin;
-// const mediaBase = `${apiOrigin}/uploads`;
 const csrfTokenApi = `${apiOrigin}/csrf-token`;
 
-// Interceptor global para unificar errores del backend
+
+
+// INTERCEPTOR GLOBAL PARA UNIFICAR ERRORES DEL BACKEND
 api.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -45,7 +46,9 @@ api.interceptors.response.use(
     }
 );
 
-// Fetch and set CSRF token globally with retries for startup timing issues
+
+
+// OBTIENE Y ESTABLECE EL TOKEN CSRF GLOBALMENTE
 async function fetchCsrfToken(retries = 3, delayMs = 500) {
     try {
         const response = await axios.get(csrfTokenApi, { withCredentials: true });
@@ -67,7 +70,9 @@ async function fetchCsrfToken(retries = 3, delayMs = 500) {
     }
 }
 
-// Endpoints usuario
+
+
+// ENDPOINTS DE USUARIO
 const loginApi = `${baseApi}/user/login`
 const logoutApi = `${baseApi}/user/logout`
 const registerApi = `${baseApi}/user/register`
@@ -85,15 +90,22 @@ const forgotPasswordApi = `${baseApi}/user/forgot-password`;
 const resetPasswordApi = `${baseApi}/user/reset-password`;
 
 
-// Endpoints de Products
+
+
+// ENDPOINTS DE PRODUCTOS
 const createProductApi = `${baseApi}/products/create`;
 const getProductsApi = `${baseApi}/products/all`;
 
 
-// Endpoints languages
+
+
+// ENDPOINTS DE IDIOMAS
 const languagesApi = `${baseApi}/languages`
 const userLanguageApi = `${baseApi}/user/language`
 
+
+
+// REALIZA UNA PETICIÓN GET
 async function get(url, body, config = {}) {
     return await api.get(url, {
         params: body || {},
@@ -101,7 +113,9 @@ async function get(url, body, config = {}) {
     })
 }
 
-// External/public APIs must not send app CSRF headers or cookies.
+
+
+// REALIZA UNA PETICIÓN GET EXTERNA SIN CREDENCIALES
 async function getExternal(url, config = {}) {
     const safeHeaders = { ...(config.headers || {}) };
 
@@ -112,6 +126,9 @@ async function getExternal(url, config = {}) {
     });
 }
 
+
+
+// REALIZA UNA PETICIÓN POST
 async function post(url, body) {
     const csrfToken = await fetchCsrfToken();
     if (!csrfToken) {
@@ -120,6 +137,9 @@ async function post(url, body) {
     return await api.post(url, body)
 }
 
+
+
+// REALIZA UNA PETICIÓN POST MULTIPART
 async function postMultipart(url, formData) {
     const csrfToken = await fetchCsrfToken();
     if (!csrfToken) {
@@ -128,6 +148,9 @@ async function postMultipart(url, formData) {
     return await api.post(url, formData, { timeout: 120000 })
 }
 
+
+
+// REALIZA UNA PETICIÓN PATCH
 async function patch(url, body) {
     const csrfToken = await fetchCsrfToken();
     if (!csrfToken) {
@@ -136,6 +159,9 @@ async function patch(url, body) {
     return await api.patch(url, body)
 }
 
+
+
+// REALIZA UNA PETICIÓN DELETE
 async function del(url) {
     const csrfToken = await fetchCsrfToken();
     if (!csrfToken) {
@@ -152,8 +178,6 @@ export {
     patch,
     del,
     fetchCsrfToken,
-    // mediaBase,
-    // apiOrigin,
 
     loginApi,
     logoutApi,

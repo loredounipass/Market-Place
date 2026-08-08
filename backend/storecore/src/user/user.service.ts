@@ -7,7 +7,9 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateProfileDto } from './dto/update-profile';
 import { EmailService } from './email.service';
 
-// Service to handle user-related operations such as registration, password management, and profile updates
+
+
+// SERVICIO PARA MANEJAR OPERACIONES DEL USUARIO
 @Injectable()
 export class UserService {
   constructor(
@@ -118,7 +120,7 @@ async sendVerificationEmail(email: string): Promise<boolean> {
       const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
       
       user.verifyEmailTokenHash = tokenHash;
-      user.verifyEmailExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+      user.verifyEmailExpires = new Date(Date.now() + 60 * 60 * 1000);
       await user.save();
 
       await this.emailService.sendVerificationEmail(user.email, token);
@@ -190,13 +192,11 @@ async sendVerificationEmail(email: string): Promise<boolean> {
       throw new UnauthorizedException('Current password is incorrect');
     }
 
-    // Prevent changing to the same password
     const isSameAsCurrent = await this.hashService.comparePassword(changePasswordDto.newPassword, user.password);
     if (isSameAsCurrent) {
       throw new BadRequestException('The new password cannot be the same as the previous one');
     }
 
-    // Prevent password changes more than once within a 10-minute window
     const TEN_MINUTES_MS = 10 * 60 * 1000;
     if (user.lastPasswordChange) {
       const elapsed = Date.now() - user.lastPasswordChange;
@@ -225,7 +225,6 @@ async sendVerificationEmail(email: string): Promise<boolean> {
       throw new NotFoundException('User not found');
     }
 
-    // Prevent profile updates more than once within a 10-minute window
     const TEN_MINUTES_MS = 10 * 60 * 1000;
     if (user.lastProfileUpdate) {
       const elapsed = Date.now() - user.lastProfileUpdate;
@@ -243,7 +242,6 @@ async sendVerificationEmail(email: string): Promise<boolean> {
     const lastNameChanged = providedLastName && updateProfileDto.lastName !== user.lastName;
     const emailChanged = providedEmail && updateProfileDto.email !== user.email;
 
-    // If none of the provided fields actually change the stored values, reject the update
     if (!firstNameChanged && !lastNameChanged && !emailChanged) {
       if ((providedFirstName || providedLastName) && !providedEmail) {
         throw new BadRequestException('You must use different names than the previous one');
@@ -254,14 +252,13 @@ async sendVerificationEmail(email: string): Promise<boolean> {
       }
     }
 
-    // If email is being changed, ensure it's not already used by another user
     if (providedEmail && emailChanged) {
       const existingUser = await this.userRepository.findOne({ email: updateProfileDto.email });
       if (existingUser && existingUser.email !== email) {
         throw new BadRequestException('The email is already in use');
       }
       user.email = updateProfileDto.email!;
-      user.isValid = false; // Revoke verification status
+      user.isValid = false;
     }
 
     if (firstNameChanged) user.firstName = updateProfileDto.firstName!;
@@ -298,7 +295,6 @@ async sendVerificationEmail(email: string): Promise<boolean> {
   async searchUsers(q: string) {
     if (!q) return [];
     
-    // Sanitize input to prevent ReDoS attacks - escape regex special characters
     const sanitized = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if (!sanitized) return [];
     
@@ -309,12 +305,10 @@ async sendVerificationEmail(email: string): Promise<boolean> {
       { lastName: regex },
     ];
 
-    // If q looks like a Mongo ObjectId, include exact _id match
     if (/^[0-9a-fA-F]{24}$/.test(q)) {
       or.push({ _id: q });
     }
 
-    // Enforce maximum limit of 20 results to prevent abuse
     const MAX_LIMIT = 20;
     const users = await this.userRepository.find({ $or: or }).limit(MAX_LIMIT).select('_id firstName lastName email language').lean().exec();
 

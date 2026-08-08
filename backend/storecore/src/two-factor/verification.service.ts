@@ -6,8 +6,8 @@ import { randomInt } from 'crypto';
 
 @Injectable()
 export class TwoFactorAuthService {
-  private readonly TOKEN_EXPIRY_MS = 5 * 60 * 1000; // 5 minutos
-  private readonly COOLDOWN_MS = 60 * 1000; // 1 minute between sends
+  private readonly TOKEN_EXPIRY_MS = 5 * 60 * 1000;
+  private readonly COOLDOWN_MS = 60 * 1000;
   private readonly MAX_ATTEMPTS = 5;
 
   constructor(
@@ -27,14 +27,11 @@ export class TwoFactorAuthService {
   // VERIFICA EL TOKEN PROPORCIONADO POR EL USUARIO
   async verifyToken(toEmail: string, token: string): Promise<{ isValid: boolean; message: string }> {
     try {
-      // atomic-safe token verification to avoid race conditions
       const tokenEntry = await this.tokenRepository.findOne({ email: toEmail });
 
-      // Dummy hash to equalize timing when tokenEntry is missing
       const DUMMY_HASH = bcrypt.hashSync('000000', 12);
 
       if (!tokenEntry) {
-        // Perform a dummy compare to mitigate timing attacks
         await bcrypt.compare(token, DUMMY_HASH);
         return { isValid: false, message: 'Invalid or expired token' };
       }
@@ -49,7 +46,6 @@ export class TwoFactorAuthService {
 
       const isMatch = await bcrypt.compare(token, tokenEntry.tokenHash);
       if (!isMatch) {
-        // increment attempts atomically
         await this.tokenRepository.findOneAndUpdate(
           { _id: tokenEntry._id, isValid: false, attempts: { $lt: this.MAX_ATTEMPTS } },
           { $inc: { attempts: 1 } }
@@ -57,7 +53,6 @@ export class TwoFactorAuthService {
         return { isValid: false, message: 'Invalid or expired token' };
       }
 
-      // Try to atomically mark token as used. Only one request will succeed.
       const updated = await this.tokenRepository.findOneAndUpdate(
         { _id: tokenEntry._id, isValid: false, attempts: { $lt: this.MAX_ATTEMPTS } },
         { $set: { isValid: true } },
@@ -89,7 +84,6 @@ export class TwoFactorAuthService {
     try {
       const now = Date.now();
 
-      // Find existing token entry for this email
       const existing = await this.tokenRepository.findOne({ email: toEmail });
       if (existing && existing.lastSentAt && (now - existing.lastSentAt) < this.COOLDOWN_MS) {
         const remainingMs = this.COOLDOWN_MS - (now - existing.lastSentAt);
@@ -97,12 +91,9 @@ export class TwoFactorAuthService {
         throw new BadRequestException(`You must wait ${remainingSec} seconds before requesting another token.`);
       }
 
-      // Generate a 6-digit token using cryptographically secure random
       const token = String(randomInt(0, 1000000)).padStart(6, '0');
       const tokenHash = await bcrypt.hash(token, 12);
 
-      // Upsert a single active token document per email. This reduces writes and keeps only
-      // one token record per user (invalidates previous tokens by replacing them).
       await this.tokenRepository.findOneAndUpdate(
         { email: toEmail },
         {

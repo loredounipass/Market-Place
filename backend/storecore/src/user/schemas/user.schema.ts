@@ -30,7 +30,6 @@ export class User {
 
     _id?: string; 
 
-    // Email verification flag retained for account verification flows
     @Prop({ default: false })
     isValid: boolean;
 
@@ -40,14 +39,12 @@ export class User {
     @Prop({ default: 'es' })
     language: string;
     
-    // Email verification fields
     @Prop()
     verifyEmailTokenHash?: string;
 
     @Prop()
     verifyEmailExpires?: Date;
 
-    // Password reset fields
     @Prop()
     resetPasswordTokenHash?: string;
 

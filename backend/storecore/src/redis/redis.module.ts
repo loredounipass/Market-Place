@@ -3,6 +3,9 @@ import Redis from 'ioredis';
 
 export const REDIS_CLIENT = 'REDIS_CLIENT';
 
+
+
+// MÓDULO GLOBAL DE REDIS
 @Global()
 @Module({
   providers: [
@@ -37,6 +40,9 @@ export const REDIS_CLIENT = 'REDIS_CLIENT';
 export class RedisModule implements OnModuleDestroy {
   constructor(@Inject(REDIS_CLIENT) private readonly redisClient: Redis) {}
 
+
+
+  // CIERRA LA CONEXIÓN DE REDIS AL DESTRUIR EL MÓDULO
   async onModuleDestroy() {
     if (this.redisClient && typeof this.redisClient.quit === 'function') {
       await this.redisClient.quit();

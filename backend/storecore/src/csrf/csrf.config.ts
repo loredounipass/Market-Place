@@ -2,10 +2,16 @@ import { randomBytes } from 'crypto';
 
 const CSRF_TOKEN_NAME = 'csrfToken';
 
+
+
+// OBTIENE EL TOKEN CSRF DEL REQUEST
 function getTokenFromRequest(req: any): string | undefined {
   return req.headers?.['x-csrf-token'] || req.body?._csrf || req.query?._csrf;
 }
 
+
+
+// GENERA UN TOKEN CSRF PARA LA SESIÓN
 function generateToken(req: any) {
   const existing = req.session?.[CSRF_TOKEN_NAME];
   if (existing) {
@@ -18,6 +24,9 @@ function generateToken(req: any) {
   return token;
 }
 
+
+
+// MIDDLEWARE DE PROTECCIÓN CSRF SINCRONIZADA
 function csrfSynchronisedProtection(req: any, res: any, next: any) {
   if (req.path === '/csrf-token') {
     return next();
