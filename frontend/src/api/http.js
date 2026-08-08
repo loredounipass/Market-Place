@@ -15,8 +15,8 @@ const api = axios.create({
     timeout: 30000,
 });
 
-const apiOrigin = new URL(baseApi).origin;
-const csrfTokenApi = `${apiOrigin}/csrf-token`;
+const apiOrigin = new URL(baseApi, window.location.origin).origin;
+const csrfTokenApi = `${apiOrigin}/secure/api/csrf-token`;
 
 
 
