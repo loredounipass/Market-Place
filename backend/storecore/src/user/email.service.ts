@@ -3,20 +3,20 @@ import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import { randomInt } from 'crypto';
 
-const GRADIENT = 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #2186EB 100%)';
+const GRADIENT = 'linear-gradient(135deg, #166534 0%, #16a34a 50%, #4ade80 100%)';
 
 const LOGO_SVG = `
   <div style="text-align:center; margin-bottom:16px">
     <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#6366F1"/>
-          <stop offset="50%" stop-color="#8B5CF6"/>
-          <stop offset="100%" stop-color="#2186EB"/>
+          <stop offset="0%" stop-color="#166534"/>
+          <stop offset="50%" stop-color="#16a34a"/>
+          <stop offset="100%" stop-color="#4ade80"/>
         </linearGradient>
       </defs>
       <polygon points="28,2 52,16 52,40 28,54 4,40 4,16" fill="url(#logoGrad)"/>
-      <text x="28" y="34" text-anchor="middle" fill="white" font-size="24" font-weight="bold" font-family="Arial,sans-serif">B</text>
+      <text x="28" y="34" text-anchor="middle" fill="white" font-size="24" font-weight="bold" font-family="Arial,sans-serif">S</text>
     </svg>
   </div>
 `;
@@ -36,13 +36,13 @@ const STYLE = `
   .lead{font-size:16px;margin-bottom:18px;color:#D1D5DB}
   .button{display:inline-block;background:${GRADIENT};color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600}
   .muted{color:#9CA3AF;font-size:14px;margin-top:16px}
-  .divider{height:1px;background:rgba(99,102,241,0.2);margin:20px 0}
+  .divider{height:1px;background:rgba(22,163,74,0.2);margin:20px 0}
   .footer{background:#12121E;padding:16px;text-align:center;font-size:13px;color:#6B7280}
-  .highlight{color:#A5B4FC;font-weight:600}
-  .token-box{background:#0F0F1A;border:1px solid rgba(99,102,241,0.3);border-radius:8px;padding:16px;text-align:center;margin:16px 0}
-  .token-box code{font-size:32px;font-weight:bold;color:#8B5CF6;letter-spacing:4px}
-  .tip-box{background:#0F0F1A;border-left:3px solid #6366F1;border-radius:4px;padding:12px 16px;margin:16px 0}
-  .tip-box h4{margin:0 0 8px;color:#A5B4FC;font-size:15px}
+  .highlight{color:#86efac;font-weight:600}
+  .token-box{background:#0F0F1A;border:1px solid rgba(22,163,74,0.3);border-radius:8px;padding:16px;text-align:center;margin:16px 0}
+  .token-box code{font-size:32px;font-weight:bold;color:#16a34a;letter-spacing:4px}
+  .tip-box{background:#0F0F1A;border-left:3px solid #16a34a;border-radius:4px;padding:12px 16px;margin:16px 0}
+  .tip-box h4{margin:0 0 8px;color:#86efac;font-size:15px}
   .tip-box ul{margin:0;padding-left:18px;color:#9CA3AF;font-size:13px}
   .tip-box li{margin:4px 0}
 `;
@@ -63,7 +63,7 @@ const TIPS_HTML = `
 const FOOTER_HTML = `
   <div class="footer">
     <p style="margin:4px 0">If you have any questions, do not hesitate to contact us.</p>
-    <p style="margin:4px 0">Thank you for using <span style="color:#8B5CF6">BrivoTrust</span>.</p>
+    <p style="margin:4px 0">Thank you for using <span style="color:#16a34a">Silkroad</span>.</p>
   </div>
 `;
 
@@ -79,7 +79,7 @@ function wrapHtml(title, bodyContent) {
       <div class="container">
         <div style="${HEADER_STYLE}">
           ${LOGO_SVG}
-          <h1 style="margin:0;font-size:22px;font-weight:700;letter-spacing:0.5px">BrivoTrust</h1>
+          <h1 style="margin:0;font-size:22px;font-weight:700;letter-spacing:0.5px">Silkroad</h1>
         </div>
         <div class="content">
           ${bodyContent}
@@ -93,8 +93,8 @@ function wrapHtml(title, bodyContent) {
 
 @Injectable()
 export class EmailService {
-  private readonly FROM_NAME = 'BrivoTrust';
-  private readonly FROM_EMAIL = 'noreply@brivotrust.com';
+  private readonly FROM_NAME = 'Silkroad';
+  private readonly FROM_EMAIL = 'noreply@silkroad.com';
   private readonly FRONTEND_URL: string;
 
   private transporter: any;
@@ -162,7 +162,7 @@ export class EmailService {
           <a class="button" href="${verificationUrl}">Verify email</a>
         </p>
         <p class="muted">If the button does not work, copy and paste this link into your browser:</p>
-        <p class="muted" style="word-break:break-all"><a href="${verificationUrl}" style="color:#6366F1">${verificationUrl}</a></p>
+        <p class="muted" style="word-break:break-all"><a href="${verificationUrl}" style="color:#16a34a">${verificationUrl}</a></p>
         <p class="muted">This link will expire in 60 minutes. If you did not request this verification, ignore this email.</p>
         <div class="divider"></div>
         <p style="color:#9CA3AF;font-size:13px">Tips to protect your account: use 2FA and do not share your credentials.</p>
@@ -195,7 +195,7 @@ export class EmailService {
           <a class="button" href="${resetUrl}">Reset password</a>
         </p>
         <p class="muted">If the button does not work, copy and paste this link into your browser:</p>
-        <p class="muted" style="word-break:break-all"><a href="${resetUrl}" style="color:#6366F1">${resetUrl}</a></p>
+        <p class="muted" style="word-break:break-all"><a href="${resetUrl}" style="color:#16a34a">${resetUrl}</a></p>
         <p class="muted">This link will expire in 60 minutes. If you did not request this reset, ignore this email.</p>
         <div class="divider"></div>
         <p style="color:#9CA3AF;font-size:13px">Tips to protect your account: use 2FA and do not share your credentials.</p>

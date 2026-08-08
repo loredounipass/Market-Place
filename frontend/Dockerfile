@@ -2,11 +2,14 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
-COPY package.json package-lock.json ./
+# Instalar pnpm globalmente
+RUN npm install -g pnpm
 
-RUN npm install
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm install
 
 COPY . .
 
 # Para React usamos start en desarrollo
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
