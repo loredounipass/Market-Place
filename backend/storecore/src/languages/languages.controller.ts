@@ -5,12 +5,18 @@ import { LanguagesService } from './languages.service';
 export class LanguagesController {
   constructor(private readonly languagesService: LanguagesService) {}
 
+
+
+  // OBTIENE TODOS LOS IDIOMAS
   @Get()
   async getAllLanguages(@Request() req) {
     const userLang = req.user?.language;
     return this.languagesService.getAllLanguages(userLang);
   }
 
+
+
+  // OBTIENE LAS TRADUCCIONES DE UN IDIOMA
   @Get(':lang')
   getLanguage(@Param('lang') lang: string) {
     return this.languagesService.getLanguageTranslations(lang);

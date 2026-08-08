@@ -4,7 +4,6 @@ import { Strategy } from 'passport-local';
 import { AuthService } from "../auth.service";
 
 
-// Local passport strategy: only validate credentials and return the authenticated user.
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(
@@ -16,8 +15,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
 
 
-    // Passport expects the strategy to return the authenticated user object.
-    // Do NOT handle 2FA or side effects here. Those belong in AuthService.login().
+
+    // VALIDA AL USUARIO CON LA ESTRATEGIA LOCAL
     async validate(email: string, password: string): Promise<any> {
         const user = await this.authService.validateUser(email, password);
         if (!user) {

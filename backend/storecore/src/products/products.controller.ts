@@ -20,6 +20,9 @@ import { AuthenticatedGuard } from 'src/guard/auth/authenticated.guard';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+
+
+  // CREA UN PRODUCTO
   @Post('create')
   @UseGuards(AuthenticatedGuard)
   @UseInterceptors(FileInterceptor('photo'))
@@ -36,6 +39,9 @@ export class ProductController {
     return this.productService.createProduct(createProductDto);
   }
 
+
+
+  // OBTIENE TODOS LOS PRODUCTOS
   @UseGuards(AuthenticatedGuard)
   @Get('all')
   async findAll(@Request() req, @Query('q') q?: string): Promise<any[]> {

@@ -16,13 +16,15 @@ export class TwoFactorAuthService {
   ) {}
 
 
-  //Methods for 2FA token management
+
+  // ENVÍA EL TOKEN DE 2FA
   sendToken(toEmail: string): Promise<{ message: string }> {
     return this.createAndSendToken(toEmail);
   }
 
 
-  // Verify the token provided by the user
+
+  // VERIFICA EL TOKEN PROPORCIONADO POR EL USUARIO
   async verifyToken(toEmail: string, token: string): Promise<{ isValid: boolean; message: string }> {
     try {
       // atomic-safe token verification to avoid race conditions
@@ -74,13 +76,15 @@ export class TwoFactorAuthService {
   }
 
 
-  // Resend a new token to the user, enforcing cooldown
+
+  // REENVÍA UN NUEVO TOKEN AL USUARIO CON ENFRIAMIENTO
   resendToken(toEmail: string): Promise<{ message: string }> {
     return this.createAndSendToken(toEmail);
   }
 
 
-  // Internal method to create a new token, save it, and send it via email
+
+  // CREA UN NUEVO TOKEN, LO GUARDA Y LO ENVÍA POR CORREO
   private async createAndSendToken(toEmail: string): Promise<{ message: string }> {
     try {
       const now = Date.now();

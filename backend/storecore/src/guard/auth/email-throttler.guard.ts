@@ -5,13 +5,14 @@ import { REDIS_CLIENT } from '../../redis/redis.module';
 export class EmailThrottlerGuard implements CanActivate {
   constructor(@Inject(REDIS_CLIENT) private readonly redisClient: any) {}
 
+
+
+  // LIMITA LAS PETICIONES POR CORREO ELECTRÓNICO
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const email = request.user?.email || request.body?.email?.toString().trim().toLowerCase();
     const path = request.route?.path || request.url;
 
-    // NGINX maneja el rate limit por IP real a nivel de red (30r/s general, 5r/m login)
-    // Este guard solo hace rate limit por email para prevenir fuerza bruta distribuida
     if (!email) return true;
 
     const isRegister = path?.includes('register');

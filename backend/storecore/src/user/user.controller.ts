@@ -37,7 +37,9 @@ export class UserController {
     private readonly forgotPasswordService: ForgotPasswordService,
   ) { }
 
-  // Route for user registration. It accepts a CreateUserDto object in the request body and calls the register method of the UserService to create a new user.
+
+
+  // REGISTRA UN NUEVO USUARIO
   @UseGuards(EmailThrottlerGuard)
   @Post('register')
   registerUser(@Body() createUserDto: CreateUserDto) {
@@ -45,7 +47,8 @@ export class UserController {
   }
 
 
-  // Route for user login. It uses the LocalAuthGuard to authenticate the user based on the provided credentials in the LoginUserDto. If authentication is successful, it calls the login method of the AuthService to generate a JWT token and handle two-factor authentication if enabled.
+
+  // INICIA LA SESIÓN DEL USUARIO
   @UseGuards(EmailThrottlerGuard, LocalAuthGuard)
   @Post('login')
   async loginUser(@Request() req) {
@@ -54,7 +57,8 @@ export class UserController {
   }
 
 
-  // Route for verifying the two-factor authentication token. It accepts a VerifyTokenDto object in the request body and calls the verifyAndLogin method of the AuthService to validate the token and complete the login process.
+
+  // VERIFICA EL TOKEN DE AUTENTICACIÓN
   @UseGuards(EmailThrottlerGuard)
   @Post('verify-token')
   async verifyToken(@Body() verifyTokenDto: VerifyTokenDto, @Request() req) {
@@ -62,8 +66,8 @@ export class UserController {
   }
 
 
-  // Route for resending the two-factor authentication token. 
-  // Works for both authenticated users (uses session email) and unauthenticated users in 2FA flow (uses body email).
+
+  // REENVÍA EL TOKEN DE AUTENTICACIÓN
   @UseGuards(EmailThrottlerGuard)
   @Post('resend-token')
   async resendToken(@Request() req, @Body() resendTokenDto: ResendTokenDto) {
@@ -85,7 +89,8 @@ export class UserController {
   }
 
 
-  // Route for updating the status of two-factor authentication for the authenticated user. It uses the authenticated user's email to update the token status.
+
+  // ACTUALIZA EL ESTADO DE AUTENTICACIÓN DE DOS FACTORES
   @UseGuards(AuthenticatedGuard, EmailThrottlerGuard)
   @Patch('update-token-status')
   async updateTokenStatus(@Request() req, @Body() updateTokenStatusDto: UpdateTokenStatusDto) {
@@ -93,7 +98,9 @@ export class UserController {
     return this.userService.updateTokenStatus(email, updateTokenStatusDto.isTokenEnabled);
   }
 
-  // Route for retrieving the current status of the two-factor authentication token for the authenticated user. It calls the getTokenStatus method of the UserService to fetch the token status based on the user's email.
+
+
+  // OBTIENE EL ESTADO DE AUTENTICACIÓN DE DOS FACTORES
   @UseGuards(AuthenticatedGuard)
   @Get('token-status')
   async getTokenStatus(@Request() req) {
@@ -102,7 +109,8 @@ export class UserController {
   }
 
 
-  // Route for updating the user's language preference
+
+  // ACTUALIZA EL IDIOMA DEL USUARIO
   @UseGuards(AuthenticatedGuard, EmailThrottlerGuard)
   @Patch('language')
   async updateLanguage(@Request() req, @Body() updateLanguageDto: UpdateLanguageDto) {
@@ -110,7 +118,9 @@ export class UserController {
     return this.userService.updateLanguage(email, updateLanguageDto.language);
   }
 
-  // Route for retrieving the user's language preference
+
+
+  // OBTIENE EL IDIOMA DEL USUARIO
   @UseGuards(AuthenticatedGuard)
   @Get('language')
   async getUserLanguage(@Request() req) {
@@ -118,7 +128,9 @@ export class UserController {
     return this.userService.getUserLanguage(email);
   }
 
-  // Route for retrieving the authenticated user's information. It uses the AuthenticatedGuard to ensure that only authenticated users can access this route, and returns the user's data from the request object.
+
+
+  // OBTIENE LA INFORMACIÓN DEL USUARIO AUTENTICADO
   @UseGuards(AuthenticatedGuard)
   @Get('info')
   getUsers(@Request() req) {
@@ -132,7 +144,8 @@ export class UserController {
   }
 
 
-  // Route for logging out the authenticated user. It uses the AuthenticatedGuard to ensure that only authenticated users can access this route, and calls the logout method on the request object to end the user's session.
+
+  // CIERRA LA SESIÓN DEL USUARIO
   @UseGuards(AuthenticatedGuard)
   @Post('logout')
   logout(@Request() req) {
@@ -144,7 +157,8 @@ export class UserController {
   }
 
 
-  // Route for changing the authenticated user's password. It accepts a ChangePasswordDto object in the request body and calls the changePassword method of the UserService to update the user's password based on their email.
+
+  // CAMBIA LA CONTRASEÑA DEL USUARIO
   @UseGuards(AuthenticatedGuard, EmailThrottlerGuard)
   @Post('change-password')
   async changePassword(@Request() req, @Body() changePasswordDto: ChangePasswordDto) {
@@ -153,7 +167,8 @@ export class UserController {
   }
 
 
-  // Route for updating the authenticated user's profile information. It accepts an UpdateProfileDto object in the request body and calls the updateProfile method of the UserService to update the user's profile based on their email.
+
+  // ACTUALIZA EL PERFIL DEL USUARIO
   @UseGuards(AuthenticatedGuard, EmailThrottlerGuard)
   @Post('update-profile')
   async updateProfile(@Request() req, @Body() updateProfileDto: UpdateProfileDto) {
@@ -162,7 +177,8 @@ export class UserController {
   }
 
 
-  // Route for verifying the authenticated user's email address. It retrieves the user's email from the authenticated session and calls the verifyEmail method of the UserService to verify the email. If successful, it returns a success message; otherwise, it throws a BadRequestException with an error message.
+
+  // VERIFICA EL CORREO ELECTRÓNICO DEL USUARIO
   @UseGuards(AuthenticatedGuard, EmailThrottlerGuard)
   @Post('verify-email')
   async verifyEmail(@Request() req, @Body() body: { token: string }): Promise<{ message: string }> {
@@ -179,7 +195,9 @@ export class UserController {
     }
   }
 
-  // Route for sending a verification email to the authenticated user. It accepts an email address in the request body and calls the sendVerificationEmail method of the UserService to send a verification email. If successful, it returns a success message; otherwise, it throws a BadRequestException with an error message.
+
+
+  // ENVÍA UN CORREO DE VERIFICACIÓN
   @UseGuards(EmailThrottlerGuard, AuthenticatedGuard)
   @Post('send-verification-email')
   async sendVerificationEmail(@Request() req): Promise<{ message: string }> {
@@ -194,7 +212,8 @@ export class UserController {
   }
 
 
-  // Route for checking if the authenticated user's email address is verified. It retrieves the user's email from the request object and calls the isEmailVerified method of the UserService to check the verification status. It returns an object containing a boolean indicating whether the email is verified and a message.
+
+  // VERIFICA SI EL CORREO ELECTRÓNICO HA SIDO VERIFICADO
   @UseGuards(AuthenticatedGuard)
   @Get('is-email-verified')
   async isEmailVerified(@Request() req): Promise<{ isVerified: boolean; message: string }> {
@@ -202,7 +221,9 @@ export class UserController {
     return this.userService.isEmailVerified(email);
   }
 
-  // Search users endpoint used by frontend (e.g. /user/search?q=...)
+
+
+  // BUSCA USUARIOS
   @UseGuards(EmailThrottlerGuard, AuthenticatedGuard)
   @Get('search')
   async searchUsers(@Request() req) {
@@ -213,7 +234,7 @@ export class UserController {
 
 
 
-  // Route for handling the forgot password functionality. It accepts an email address in the request body and calls the requestPasswordReset method of the ForgotPasswordService to initiate the password reset process. If successful, it returns a message indicating that a reset email has been sent; otherwise, it throws a BadRequestException with an error message.
+  // SOLICITA EL RESTABLECIMIENTO DE CONTRASEÑA
   @UseGuards(EmailThrottlerGuard)
   @Post('forgot-password')
   async forgotPassword(@Body() body: ForgotPasswordDto) {
@@ -228,7 +249,7 @@ export class UserController {
 
 
 
-  // Route for resetting the user's password. It accepts an email address, a reset token, a new password, and a confirmation of the new password in the request body. It calls the resetPassword method of the ForgotPasswordService to update the user's password. If successful, it returns a success message; otherwise, it throws a BadRequestException with an error message.
+  // RESTABLECE LA CONTRASEÑA DEL USUARIO
   @UseGuards(EmailThrottlerGuard)
   @Post('reset-password')
   async resetPassword(@Body() body: ResetPasswordDto) {

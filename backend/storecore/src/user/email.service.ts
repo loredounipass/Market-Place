@@ -109,6 +109,9 @@ export class EmailService {
     });
   }
 
+
+
+  // ENVÍA EL TOKEN DE INICIO DE SESIÓN
   async sendTokenLogin(toEmail: string, token: string): Promise<void> {
     const mailOptions = {
       from: `${this.FROM_NAME} <${this.FROM_EMAIL}>`,
@@ -133,12 +136,18 @@ export class EmailService {
     }
   }
 
+
+
+  // GENERA UN NUEVO TOKEN
   async generateToken(): Promise<string> {
     const num = randomInt(0, 1000000);
     await Promise.resolve();
     return String(num).padStart(6, '0');
   }
 
+
+
+  // ENVÍA EL CORREO DE VERIFICACIÓN
   async sendVerificationEmail(email: string, token: string): Promise<void> {
     const verificationUrl = `${this.FRONTEND_URL}/verifyemail?token=${encodeURIComponent(token)}`;
 
@@ -167,6 +176,9 @@ export class EmailService {
     }
   }
 
+
+
+  // ENVÍA EL CORREO DE RESTABLECIMIENTO DE CONTRASEÑA
   async sendForgotPasswordEmail(email: string, token: string): Promise<void> {
     const resetUrl = `${this.FRONTEND_URL}/reset-password?email=${encodeURIComponent(
       email,
@@ -197,6 +209,9 @@ export class EmailService {
     }
   }
 
+
+
+  // ENVÍA UNA NOTIFICACIÓN DE INICIO DE SESIÓN
   async sendLoginNotificationEmail(toEmail: string): Promise<void> {
     const mailOptions = {
       from: `${this.FROM_NAME} <${this.FROM_EMAIL}>`,

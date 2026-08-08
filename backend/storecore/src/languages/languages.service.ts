@@ -15,6 +15,9 @@ export class LanguagesService implements OnModuleInit {
     this.languagesPath = this.resolveLanguagesPath();
   }
 
+
+
+  // RESUELVE LA RUTA DEL DIRECTORIO DE IDIOMAS
   private resolveLanguagesPath(): string {
     const candidates = [
       path.resolve(process.cwd(), 'src', 'languages', 'data'),
@@ -26,6 +29,9 @@ export class LanguagesService implements OnModuleInit {
     return existingPath || candidates[0];
   }
 
+
+
+  // INICIALIZA LOS IDIOMAS POR DEFECTO EN LA BASE DE DATOS
   async onModuleInit() {
     const languages = [
       { code: 'en', name: 'English', nativeName: 'English' },
@@ -41,6 +47,9 @@ export class LanguagesService implements OnModuleInit {
     }
   }
 
+
+
+  // OBTIENE TODOS LOS IDIOMAS ACTIVOS
   async getAllLanguages(userLang?: string): Promise<any[]> {
     let languages: any[] = await this.languageModel.find().lean().exec();
     if (!languages || languages.length === 0) {
@@ -70,6 +79,9 @@ export class LanguagesService implements OnModuleInit {
     }));
   }
 
+
+
+  // OBTIENE LAS TRADUCCIONES DE UN IDIOMA ESPECÍFICO
   getLanguageTranslations(lang: string): any {
     if (!/^[a-zA-Z0-9_-]+$/.test(lang)) {
       throw new NotFoundException(`Invalid language code: '${lang}'`);

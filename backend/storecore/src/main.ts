@@ -9,29 +9,24 @@ const { RedisStore } = require('connect-redis');
 const session = require('express-session');
 const passport = require('passport');
 import { ValidationPipe } from '@nestjs/common';
-// helmet removed as Nginx handles security headers
 import { REDIS_CLIENT } from './redis/redis.module';
 import { csrfSynchronisedProtection } from './csrf/csrf.config';
 
 
-// This is the main entry point of the application. It sets up the NestJS application, configures CORS, global prefix, validation pipes, session management with Redis, and initializes Passport for authentication. Finally, it starts the application on the specified port.
+
+// INICIALIZA LA APLICACIÓN PRINCIPAL
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Trust proxy for secure cookies
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.set('trust proxy', 1);
   expressApp.disable('x-powered-by');
-
-  // Security headers are handled by Nginx completely.
 
   app.enableCors({
     origin: [process.env.CORS_ORIGIN],
     credentials: true
   });
 
-
-  // Set a global prefix for all routes
   app.setGlobalPrefix('secure/api', {
     exclude: ['/csrf-token', ''],
   });
@@ -41,8 +36,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true
     })
   );
-
-  // Configure session management using Redis as the session store
 
   const redisClient = app.get(REDIS_CLIENT);
 
@@ -69,10 +62,10 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // CSRF protection runs after sessions are initialized
   app.use(csrfSynchronisedProtection);
 
-  // Servir archivos multimedia con autenticación
+
+  // SERVIR ARCHIVOS MULTIMEDIA CON AUTENTICACIÓN
   const uploadsDir = resolve(process.cwd(), 'uploads');
   app.use('/uploads', (req: any, res: any, next: any) => {
     if (!req.isAuthenticated || !req.isAuthenticated()) {

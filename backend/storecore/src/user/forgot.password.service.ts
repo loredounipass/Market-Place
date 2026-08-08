@@ -14,14 +14,14 @@ export class ForgotPasswordService {
   ) {}
 
 
-  // Handles password reset requests by generating a token, saving it to the user, and sending an email
+
+  // SOLICITA EL RESTABLECIMIENTO DE CONTRASEÑA
   async requestPasswordReset(email: string): Promise<boolean> {
     const user = await this.userRepository.findOne({ email });
     if (!user) {
       throw new BadRequestException('User not found');
     }
 
-    // Rate limit: only allow one reset request every 2 minutes
     const now = Date.now();
     const RATE_LIMIT_MS = 2 * 60 * 1000; // 2 minutos
     if (user.resetPasswordLastSentAt && (now - user.resetPasswordLastSentAt) < RATE_LIMIT_MS) {
@@ -29,7 +29,7 @@ export class ForgotPasswordService {
       const remainingSec = Math.ceil(remainingMs / 1000);
       throw new BadRequestException(`You must wait ${remainingSec} seconds before requesting another reset.`);
     }
-// Generate a secure random token and save its hash to the user document
+
     const token = randomBytes(20).toString('hex');
     const expires = new Date(now + RATE_LIMIT_MS); // 2 minutos
 
@@ -48,7 +48,8 @@ export class ForgotPasswordService {
   }
 
 
-// Resets the user's password after validating the token and new password
+
+  // RESTABLECE LA CONTRASEÑA DEL USUARIO
   async resetPassword(email: string, token: string, newPassword: string, confirmNewPassword: string) {
     const user = await this.userRepository.findOne({ email });
     if (!user) {
@@ -72,7 +73,6 @@ export class ForgotPasswordService {
       throw new BadRequestException('Invalid token');
     }
 
-    // Reject token if password was changed after token was issued
     if (user.lastPasswordChange && user.resetPasswordLastSentAt && user.lastPasswordChange >= user.resetPasswordLastSentAt) {
       throw new BadRequestException('The token is no longer valid because the password was changed after the token was issued');
     }

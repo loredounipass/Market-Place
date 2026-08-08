@@ -17,7 +17,8 @@ export class AuthService {
   ) {}
 
 
-  // This method validates the user's credentials by retrieving the user information based on the provided email and comparing the provided password with the stored hashed password. If the credentials are valid, it returns a safe user object without the password; otherwise, it returns null.
+
+  // VALIDA LAS CREDENCIALES DEL USUARIO
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.getUserByEmail(email);
     if (user && await this.hashService.comparePassword(password, user.password)) {
@@ -28,14 +29,13 @@ export class AuthService {
   }
 
 
-  // Handle login given an already-validated `user` (from Passport `req.user`).
-  // This avoids re-querying the database and re-checking the password.
+
+  // INICIA LA SESIÓN DEL USUARIO
   async login(user: any, req: any): Promise<any> {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials.');
     }
     if ((user as any).isTokenEnabled) {
-      // send token for 2FA flow
       await this.twoFactorAuthService.sendToken((user as any).email);
       return { requires2FA: true, msg: 'Verification code sent to your email.' };
     }
@@ -44,7 +44,8 @@ export class AuthService {
   }
 
 
-  // This method verifies the provided two-factor authentication token for the user. It retrieves the user information based on the email, checks if 2FA is enabled, and then calls the TwoFactorAuthService to verify the token. If the token is valid, it proceeds to perform the login operation; otherwise, it throws an UnauthorizedException with an appropriate message.
+
+  // VERIFICA EL TOKEN DE 2FA E INICIA SESIÓN
   async verifyAndLogin(verifyTokenDto: VerifyTokenDto, req: any): Promise<any> {
     const { email, token } = verifyTokenDto;
     const user = await this.userService.getUserByEmail(email);
@@ -60,7 +61,8 @@ export class AuthService {
   }
 
 
-  // This private method performs the login operation by regenerating the session ID (to prevent session fixation) and using Passport's req.login to establish a session for the user. It returns a promise that resolves with a success message if the login is successful, or rejects with an UnauthorizedException if there is an error during the login process. Additionally, it sends a login notification email to the user after a successful login.
+
+  // REALIZA EL PROCESO DE INICIO DE SESIÓN Y REGENERACIÓN DE SESIÓN
   private performLogin(user: any, req: any) {
     return new Promise((resolve, reject) => {
       const session = req.session;

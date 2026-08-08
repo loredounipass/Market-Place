@@ -12,6 +12,9 @@ export class ProductService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
+
+
+  // VALIDA SI EL USUARIO EXISTE
   private async validateUser(email: string): Promise<UserDocument> {
     const user = await this.userModel.findOne({ email });
     if (!user) {
@@ -20,6 +23,9 @@ export class ProductService {
     return user;
   }
 
+
+
+  // CONVIERTE LA FOTO A FORMATO BASE64
   private convertPhotoToBase64(photo: Buffer | string): string {
     if (Buffer.isBuffer(photo)) {
       return photo.toString('base64');
@@ -29,6 +35,9 @@ export class ProductService {
     throw new InternalServerErrorException('Formato de imagen no válido. La imagen debe ser un Buffer o una cadena en base64.');
   }
 
+
+
+  // CREA UN NUEVO PRODUCTO EN LA BASE DE DATOS
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
     try {
       const user = await this.validateUser(createProductDto.email);
@@ -53,6 +62,9 @@ export class ProductService {
     }
   }
 
+
+
+  // OBTIENE TODOS LOS PRODUCTOS CON FILTRO OPCIONAL
   async getAllProducts(query?: string): Promise<any[]> {
     try {
       const pipeline: any[] = [];

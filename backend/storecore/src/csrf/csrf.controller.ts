@@ -5,6 +5,10 @@ import { generateToken } from './csrf.config';
 
 @Controller()
 export class CsrfController {
+
+
+
+  // OBTIENE EL TOKEN CSRF
   @Public()
   @Get('csrf-token')
   getCsrfToken(@Req() req: Request) {

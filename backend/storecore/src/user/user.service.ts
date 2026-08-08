@@ -13,22 +13,25 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly hashService: HashService,
-    private readonly emailService: EmailService
   ) {}
 
 
 
-  // Retrieve a user by their email address from the database
+  // OBTIENE UN USUARIO POR SU CORREO ELECTRÓNICO
   getUserByEmail(email: string) {
     return this.userRepository.findOne({ email });
   }
 
+
+
+  // OBTIENE UN USUARIO POR SU ID
   getUserById(id: string) {
     return this.userRepository.findById(id);
   }
 
 
-  //Register a new user, hash the password, and save to the database
+
+  // REGISTRA UN NUEVO USUARIO Y HASHEA SU CONTRASEÑA
   async register(createUserDto: CreateUserDto) {
     if (createUserDto.password !== createUserDto.confirmPassword) {
       throw new BadRequestException("Passwords do not match");
@@ -47,7 +50,8 @@ export class UserService {
   }
 
 
-// Check if the user's email is verified by looking at the isValid field in the database
+
+  // VERIFICA SI EL CORREO ELECTRÓNICO DEL USUARIO ESTÁ VERIFICADO
   async isEmailVerified(email: string): Promise<{ isVerified: boolean; message: string }> {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -62,7 +66,8 @@ export class UserService {
 }
 
 
-// Verify the user's email by setting the isValid field to true in the database
+
+// VERIFICA EL CORREO ELECTRÓNICO MEDIANTE UN TOKEN
 async verifyEmail(email: string, token: string): Promise<boolean> {
   const user = await this.getUserByEmail(email);
   
@@ -96,7 +101,7 @@ async verifyEmail(email: string, token: string): Promise<boolean> {
 
 
 
-// Verify the user's email by setting the isValid field to true in the database
+// ENVÍA UN CORREO DE VERIFICACIÓN
 async sendVerificationEmail(email: string): Promise<boolean> {
   const user = await this.getUserByEmail(email);
   
@@ -124,7 +129,8 @@ async sendVerificationEmail(email: string): Promise<boolean> {
 }
 
 
-// Update the user's token status (enable or disable) in the database
+
+// ACTUALIZA EL ESTADO DEL TOKEN DE DOS FACTORES
   async updateTokenStatus(email: string, isTokenEnabled: boolean) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -136,7 +142,8 @@ async sendVerificationEmail(email: string): Promise<boolean> {
   }
 
 
-// Get the user's token status (enabled or disabled) from the database
+
+// OBTIENE EL ESTADO DEL TOKEN DE DOS FACTORES
   async getTokenStatus(email: string) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -145,6 +152,9 @@ async sendVerificationEmail(email: string): Promise<boolean> {
     return { isTokenEnabled: !!user.isTokenEnabled };
   }
 
+
+
+  // ACTUALIZA EL IDIOMA DEL USUARIO
   async updateLanguage(email: string, language: string) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -155,6 +165,9 @@ async sendVerificationEmail(email: string): Promise<boolean> {
     return { msg: 'Language updated successfully.' };
   }
 
+
+
+  // OBTIENE EL IDIOMA DEL USUARIO
   async getUserLanguage(email: string) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -164,7 +177,8 @@ async sendVerificationEmail(email: string): Promise<boolean> {
   }
 
 
-// Change the user's password by verifying the current password and updating it with the new password in the database
+
+// CAMBIA LA CONTRASEÑA DEL USUARIO
   async changePassword(email: string, changePasswordDto: ChangePasswordDto) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -203,7 +217,8 @@ async sendVerificationEmail(email: string): Promise<boolean> {
   }
 
 
-// Update the user's profile information (first name, last name, and email) in the database
+
+// ACTUALIZA EL PERFIL DEL USUARIO
   async updateProfile(email: string, updateProfileDto: UpdateProfileDto, req?: any) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -252,7 +267,6 @@ async sendVerificationEmail(email: string): Promise<boolean> {
     if (firstNameChanged) user.firstName = updateProfileDto.firstName!;
     if (lastNameChanged) user.lastName = updateProfileDto.lastName!;
 
-    // update lastProfileUpdate timestamp
     user.lastProfileUpdate = Date.now();
     await user.save();
 
@@ -278,7 +292,9 @@ async sendVerificationEmail(email: string): Promise<boolean> {
     return result;
   }
 
-   // Search users by query -- supports partial name/email and exact ObjectId
+
+
+   // BUSCA USUARIOS POR EMAIL, NOMBRE, O ID
   async searchUsers(q: string) {
     if (!q) return [];
     

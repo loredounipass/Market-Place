@@ -12,7 +12,9 @@ import { TwoFactorAuthModule } from './two-factor/verification.module';
 import { ProductModule } from './products/products.module';
 import { LanguagesModule } from './languages/languages.module';
 
-// This is the main application module that imports and configures various modules such as ConfigModule for environment variables, MongooseModule for MongoDB connection, ThrottlerModule for rate limiting, BullModule for Redis-based queues, and other feature modules like UserModule, WalletModule, AuthModule, TransactionModule, ProviderModule, and TwoFactorAuthModule. It also provides the AppService for handling application-level logic.
+
+
+// MÓDULO PRINCIPAL DE LA APLICACIÓN
 @Module({
   imports: [
     ConfigModule.forRoot(),
