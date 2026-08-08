@@ -15,7 +15,8 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly hashService: HashService,
-  ) {}
+    private readonly emailService: EmailService,
+  ) { }
 
 
 
@@ -57,82 +58,82 @@ export class UserService {
   async isEmailVerified(email: string): Promise<{ isVerified: boolean; message: string }> {
     const user = await this.getUserByEmail(email);
     if (!user) {
-        throw new BadRequestException('The user with the provided email does not exist.');
+      throw new BadRequestException('The user with the provided email does not exist.');
     }
-    
+
     if (user.isValid) {
-        return { isVerified: true, message: 'Email verified successfully.' };
+      return { isVerified: true, message: 'Email verified successfully.' };
     } else {
-        return { isVerified: false, message: 'The email is not yet verified.' };
+      return { isVerified: false, message: 'The email is not yet verified.' };
     }
-}
+  }
 
 
 
-// VERIFICA EL CORREO ELECTRÓNICO MEDIANTE UN TOKEN
-async verifyEmail(email: string, token: string): Promise<boolean> {
-  const user = await this.getUserByEmail(email);
-  
-  if (!user) {
+  // VERIFICA EL CORREO ELECTRÓNICO MEDIANTE UN TOKEN
+  async verifyEmail(email: string, token: string): Promise<boolean> {
+    const user = await this.getUserByEmail(email);
+
+    if (!user) {
       throw new BadRequestException('User does not exist.');
-  }
-  
-  if (user.isValid) {
+    }
+
+    if (user.isValid) {
       throw new BadRequestException('Email already verified.');
-  }
+    }
 
-  if (!user.verifyEmailTokenHash || !user.verifyEmailExpires || user.verifyEmailExpires < new Date()) {
+    if (!user.verifyEmailTokenHash || !user.verifyEmailExpires || user.verifyEmailExpires < new Date()) {
       throw new BadRequestException('The token is invalid or has expired.');
-  }
+    }
 
-  const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-  if (user.verifyEmailTokenHash !== tokenHash) {
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    if (user.verifyEmailTokenHash !== tokenHash) {
       throw new BadRequestException('The token is invalid or has expired.');
-  }
-  
-  try {
+    }
+
+    try {
       user.isValid = true;
       user.verifyEmailTokenHash = undefined;
       user.verifyEmailExpires = undefined;
       await user.save();
       return true;
-  } catch {
+    } catch {
       throw new BadRequestException('Error verifying email.');
+    }
   }
-}
 
 
 
-// ENVÍA UN CORREO DE VERIFICACIÓN
-async sendVerificationEmail(email: string): Promise<boolean> {
-  const user = await this.getUserByEmail(email);
-  
-  if (!user) {
+  // ENVÍA UN CORREO DE VERIFICACIÓN
+  async sendVerificationEmail(email: string): Promise<boolean> {
+    const user = await this.getUserByEmail(email);
+
+    if (!user) {
       throw new BadRequestException('User does not exist.');
-  }
+    }
 
-  if (user.isValid) {
+    if (user.isValid) {
       throw new BadRequestException('Email already verified. Cannot resend.');
-  }
-  
-  try {
+    }
+
+    try {
       const token = crypto.randomBytes(32).toString('hex');
       const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-      
+
       user.verifyEmailTokenHash = tokenHash;
       user.verifyEmailExpires = new Date(Date.now() + 60 * 60 * 1000);
       await user.save();
 
       await this.emailService.sendVerificationEmail(user.email, token);
       return true;
-  } catch {
+    } catch {
       throw new BadRequestException('Error sending email.');
+    }
   }
-}
 
 
 
-// ACTUALIZA EL ESTADO DEL TOKEN DE DOS FACTORES
+  // ACTUALIZA EL ESTADO DEL TOKEN DE DOS FACTORES
   async updateTokenStatus(email: string, isTokenEnabled: boolean) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -145,7 +146,7 @@ async sendVerificationEmail(email: string): Promise<boolean> {
 
 
 
-// OBTIENE EL ESTADO DEL TOKEN DE DOS FACTORES
+  // OBTIENE EL ESTADO DEL TOKEN DE DOS FACTORES
   async getTokenStatus(email: string) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -180,7 +181,7 @@ async sendVerificationEmail(email: string): Promise<boolean> {
 
 
 
-// CAMBIA LA CONTRASEÑA DEL USUARIO
+  // CAMBIA LA CONTRASEÑA DEL USUARIO
   async changePassword(email: string, changePasswordDto: ChangePasswordDto) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -218,7 +219,7 @@ async sendVerificationEmail(email: string): Promise<boolean> {
 
 
 
-// ACTUALIZA EL PERFIL DEL USUARIO
+  // ACTUALIZA EL PERFIL DEL USUARIO
   async updateProfile(email: string, updateProfileDto: UpdateProfileDto, req?: any) {
     const user = await this.getUserByEmail(email);
     if (!user) {
@@ -291,13 +292,13 @@ async sendVerificationEmail(email: string): Promise<boolean> {
 
 
 
-   // BUSCA USUARIOS POR EMAIL, NOMBRE, O ID
+  // BUSCA USUARIOS POR EMAIL, NOMBRE, O ID
   async searchUsers(q: string) {
     if (!q) return [];
-    
+
     const sanitized = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if (!sanitized) return [];
-    
+
     const regex = new RegExp(sanitized, 'i');
     const or: any[] = [
       { email: regex },

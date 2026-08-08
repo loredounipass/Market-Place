@@ -28,7 +28,7 @@ function generateToken(req: any) {
 
 // MIDDLEWARE DE PROTECCIÓN CSRF SINCRONIZADA
 function csrfSynchronisedProtection(req: any, res: any, next: any) {
-  if (req.path === '/csrf-token') {
+  if (req.path.endsWith('/csrf-token')) {
     return next();
   }
 

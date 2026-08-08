@@ -28,7 +28,7 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('secure/api', {
-    exclude: ['/csrf-token', ''],
+    exclude: [''],
   });
   app.useGlobalPipes(
     new ValidationPipe({
