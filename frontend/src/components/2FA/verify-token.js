@@ -1,51 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
-import useAuth from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import useVerifyToken from '../../hooks/useVerifyToken';
 
 const VerifyToken = () => {
-    const [formValues, setFormValues] = useState({ token: '' });
-    const { verifyToken, error } = useAuth();
-    const [loading, setLoading] = useState(false);
-    const [localError, setLocalError] = useState(null);
-    const navigate = useNavigate();
-    const isMounted = useRef(true);
-
-    useEffect(() => {
-        return () => {
-            isMounted.current = false;
-        };
-    }, []);
-
-    const handleChange = (e) => {
-        setFormValues({ ...formValues, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const storedEmail = localStorage.getItem('email');
-        if (!storedEmail) {
-            setLocalError('No se encontró el correo electrónico. Por favor, asegúrate de que estés autenticado.');
-            return;
-        }
-
-        setLoading(true);
-        setTimeout(async () => {
-            try {
-                const response = await verifyToken({ email: storedEmail, ...formValues });
-                if (isMounted.current && response?.msg === 'Logged in!') {
-                    navigate('/');
-                }
-            } catch (err) {
-            } finally {
-                if (isMounted.current) setLoading(false);
-            }
-        }, 2000);
-    };
-
-    const handleResend = () => {
-        navigate('/resendtoken');
-    };
+    const {
+        formValues,
+        loading,
+        localError,
+        error,
+        handleChange,
+        handleSubmit,
+        handleResend
+    } = useVerifyToken();
 
     return (
         <div className="w-full max-w-sm mx-auto flex flex-col items-center mt-6 px-4">

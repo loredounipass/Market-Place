@@ -1,48 +1,20 @@
-import React, { useEffect, useState, useContext } from 'react';
-import useAuth from '../../hooks/useAuth';
-import { AuthContext } from '../../hooks/AuthContext';
+import React from 'react';
+import useUserProfileComponent from '../../hooks/useUserProfileComponent';
 
 const inputBase = "w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20";
 
 function UserProfileComponent() {
-    const { updateUserProfile, error, successMessage } = useAuth();
-    const { auth } = useContext(AuthContext);
-
-    const [firstName, setFirstName] = useState(auth.firstName || '');
-    const [lastName, setLastName] = useState(auth.lastName || '');
-    const [email, setEmail] = useState(auth.email || '');
-    const [localError, setLocalError] = useState('');
-    const [localSuccessMessage, setLocalSuccessMessage] = useState('');
-
-    useEffect(() => {
-        if (auth) {
-            setFirstName(auth.firstName || '');
-            setLastName(auth.lastName || '');
-            setEmail(auth.email || '');
-        }
-    }, [auth]);
-
-    const handleUpdateProfile = async () => {
-        setLocalError('');
-        setLocalSuccessMessage('');
-
-        if (!firstName || !lastName || !email) {
-            setLocalError('Todos los campos son obligatorios.');
-            return;
-        }
-
-        const body = { firstName, lastName, email };
-        await updateUserProfile(body);
-    };
-
-    useEffect(() => {
-        if (successMessage) {
-            setLocalSuccessMessage(successMessage);
-        }
-        if (error) {
-            setLocalError(error);
-        }
-    }, [successMessage, error]);
+    const {
+        firstName,
+        setFirstName,
+        lastName,
+        setLastName,
+        email,
+        setEmail,
+        localError,
+        localSuccessMessage,
+        handleUpdateProfile
+    } = useUserProfileComponent();
 
     return (
         <div className="flex flex-col">

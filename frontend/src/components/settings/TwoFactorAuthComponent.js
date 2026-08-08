@@ -1,79 +1,18 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../hooks/AuthContext';
-import User from '../../services/user';
-import useAuth from '../../hooks/useAuth';
+import React from 'react';
+import useTwoFactorAuthComponent from '../../hooks/useTwoFactorAuthComponent';
 
 const TwoFactorAuthComponent = () => {
-  const { auth } = useContext(AuthContext);
-  const { updateTokenStatus, error, setError } = useAuth();
-
-  const [isTokenEnabled, setIsTokenEnabled] = useState(() => localStorage.getItem('isTokenEnabled') === 'true');
-  const [showWarning, setShowWarning] = useState(false);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
-
-  useEffect(() => {
-    const fetchTokenStatus = async () => {
-      if (!auth) return;
-      try {
-        const { data } = await User.getInfo();
-        if (data?.data) {
-          const { isTokenEnabled } = data.data;
-          setIsTokenEnabled(isTokenEnabled);
-          localStorage.setItem('isTokenEnabled', isTokenEnabled);
-        } else {
-          setError(data.error);
-        }
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-
-    fetchTokenStatus();
-  }, [auth, setError]);
-
-  const toggleTwoFactorAuth = () => {
-    if (isTokenEnabled) {
-      setShowWarning(true);
-      setConfirmDialogOpen(true);
-    } else {
-      updateTokenStatusAndLocalStorage(true);
-    }
-  };
-
-  const updateTokenStatusAndLocalStorage = async (newStatus) => {
-    try {
-      await updateTokenStatus({ isTokenEnabled: newStatus });
-      setIsTokenEnabled(newStatus);
-      localStorage.setItem('isTokenEnabled', newStatus);
-
-      if (newStatus) {
-        setShowWarning(false);
-        setSnackbar({ open: true, message: "Autenticación de dos factores activada.", severity: "success" });
-      } else {
-        setShowWarning(true);
-        setSnackbar({ open: true, message: "Autenticación de dos factores desactivada.", severity: "success" });
-      }
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleConfirmDialogClose = (confirm) => {
-    setConfirmDialogOpen(false);
-    if (confirm) {
-      updateTokenStatusAndLocalStorage(false);
-    }
-  };
-
-  const handleCloseSnackbar = () => setSnackbar((prev) => ({ ...prev, open: false }));
-
-  useEffect(() => {
-    if (snackbar.open) {
-      const timer = setTimeout(handleCloseSnackbar, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [snackbar.open]);
+  const {
+    isTokenEnabled,
+    showWarning,
+    confirmDialogOpen,
+    snackbar,
+    error,
+    setError,
+    toggleTwoFactorAuth,
+    handleConfirmDialogClose,
+    handleCloseSnackbar
+  } = useTwoFactorAuthComponent();
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg shadow-black/5 max-w-lg mx-auto">

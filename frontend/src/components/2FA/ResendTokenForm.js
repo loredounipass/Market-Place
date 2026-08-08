@@ -1,26 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import useAuth from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import useResendTokenForm from '../../hooks/useResendTokenForm';
 
 const ResendTokenForm = () => {
-    const { resendToken, error, successMessage } = useAuth();
-    const [email, setEmail] = useState('');
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (successMessage === 'Código de verificación reenviado a tu correo electrónico.') {
-            navigate('/verifytoken');
-        }
-    }, [successMessage]);
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            await resendToken({ email });
-        } catch (err) {
-            console.error(err);
-        }
-    };
+    const {
+        email,
+        handleEmailChange,
+        handleSubmit,
+        error,
+        successMessage
+    } = useResendTokenForm();
 
     return (
         <div className="w-full max-w-sm mx-auto flex flex-col items-center mt-6 px-4">
@@ -44,7 +32,7 @@ const ResendTokenForm = () => {
                         <input
                             type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={handleEmailChange}
                             required
                             placeholder="Correo Electrónico"
                             className="w-full px-4 py-3 rounded-lg bg-white border border-gray-200 text-sm focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/20"

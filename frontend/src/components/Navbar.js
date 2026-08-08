@@ -1,49 +1,24 @@
 "use client"
 
-import React, { useState, useContext } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import useAuth from "../hooks/useAuth"
-import { AuthContext } from "../hooks/AuthContext"
+import React from "react"
+import { Link } from "react-router-dom"
+import useNavbar from '../hooks/useNavbar'
 
 export default function Navbar() {
-  const { auth } = useContext(AuthContext)
-  const { logoutUser } = useAuth()
-  const [anchorElUser, setAnchorElUser] = useState(null)
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const navigate = useNavigate()
+  const {
+    auth,
+    anchorElUser,
+    drawerOpen,
+    setDrawerOpen,
+    navItems,
+    settings,
+    getAvatarColor,
+    handleOpenUserMenu,
+    handleCloseUserMenu,
+    handleClickUserMenu
+  } = useNavbar();
 
-  if (!auth) return null
-
-  const navItems = [
-    { href: "/create", label: "Vender productos" },
-    { href: "/contactanos", label: "Contáctanos" },
-    { href: "/ubicaciones", label: "Ubicaciones" },
-  ]
-
-  const settings = [
-    { label: "Settings", action: "settings" },
-    { label: "Logout", action: "logout" },
-  ]
-
-  const getAvatarColor = (name) => {
-    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD"]
-    return colors[name.charCodeAt(0) % colors.length]
-  }
-
-  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget)
-  const handleCloseUserMenu = () => setAnchorElUser(null)
-
-  const handleClickUserMenu = async (e, action) => {
-    e.stopPropagation()
-    if (action === "logout") {
-      await logoutUser()
-      window.location.reload()
-    } else if (action === "settings") {
-      navigate("/settings")
-    }
-    setAnchorElUser(null)
-    setDrawerOpen(false)
-  }
+  if (!auth) return null;
 
   return (
     <>

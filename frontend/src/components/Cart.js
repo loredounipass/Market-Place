@@ -1,9 +1,10 @@
 "use client"
 
 import React from "react"
+import useCartDrawer from '../hooks/useCartDrawer'
 
 function CartDrawer({ open, onClose, items = [], onRemove = () => {}, onUpdateQty = () => {} }) {
-  const total = items.reduce((s, it) => s + (parseFloat(it.price || 0) * (it.qty || 1)), 0)
+  const { total } = useCartDrawer({ items })
 
   if (!open) return null
 

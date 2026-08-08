@@ -1,25 +1,16 @@
-import React, { useState } from 'react';
-import useProducts from '../hooks/useProducts';
+import React from 'react';
+import useSearchProducts from '../hooks/useSearchProducts';
 
 function SearchProducts() {
-  const { products, loading, error } = useProducts();
-  const [keyword, setKeyword] = useState('');
-  const [submittedKeyword, setSubmittedKeyword] = useState('');
-
-  const handleKeywordChange = (e) => {
-    setKeyword(e.target.value);
-  };
-
-  const handleSearchClick = () => {
-    setSubmittedKeyword(keyword);
-  };
-
-  const filteredProducts = products.filter((product) => {
-    const key = submittedKeyword.toLowerCase();
-    const name = product.name ? product.name.toLowerCase() : '';
-    const description = product.description ? product.description.toLowerCase() : '';
-    return key && (name.includes(key) || description.includes(key));
-  });
+  const {
+    loading,
+    error,
+    keyword,
+    submittedKeyword,
+    handleKeywordChange,
+    handleSearchClick,
+    filteredProducts
+  } = useSearchProducts();
 
   return (
     <div className="mt-6 p-6">

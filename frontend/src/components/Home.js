@@ -1,178 +1,54 @@
 "use client"
 
-import { useContext, useState, useEffect, useRef } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import CartDrawer from "./Cart"
-import useAuth from "../hooks/useAuth"
-import { AuthContext } from "../hooks/AuthContext"
-import useProducts from "../hooks/useProducts"
+import useHome from '../hooks/useHome'
 
 function DashboardContent() {
-  const { auth } = useContext(AuthContext)
-  const [anchorElUser, setAnchorElUser] = useState(null)
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const { logoutUser } = useAuth()
-  const navigate = useNavigate()
-  const { products, loading, error, getProducts } = useProducts()
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [primaryCategory, setPrimaryCategory] = useState({ value: "all", label: "Todos" })
-  const [anchorOverflow, setAnchorOverflow] = useState(null)
-  const [cartOpen, setCartOpen] = useState(false)
-  const [cartItems, setCartItems] = useState([])
-  const [searchKeyword, setSearchKeyword] = useState("")
-  const [submittedKeyword, setSubmittedKeyword] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [toastOpen, setToastOpen] = useState(false)
-  const [toastMessage, setToastMessage] = useState("")
-  const [toastSeverity, setToastSeverity] = useState("success")
-  const userMenuRef = useRef(null)
+  const {
+    auth,
+    anchorElUser,
+    drawerOpen,
+    setDrawerOpen,
+    loading,
+    error,
+    selectedCategory,
+    primaryCategory,
+    setPrimaryCategory,
+    anchorOverflow,
+    setAnchorOverflow,
+    cartOpen,
+    cartItems,
+    searchKeyword,
+    currentPage,
+    setCurrentPage,
+    toastOpen,
+    toastMessage,
+    toastSeverity,
+    userMenuRef,
+    handleOpenUserMenu,
+    handleClickUserMenu,
+    handleContactClick,
+    handleOpenCart,
+    handleCloseCart,
+    handleCloseToast,
+    handleAddToCart,
+    handleDecrementFromProduct,
+    handleRemoveFromCart,
+    handleUpdateQty,
+    getAvatarColor,
+    handleCategoryChange,
+    handleKeywordChange,
+    handleSearch,
+    sortedProducts,
+    totalPages,
+    displayProducts,
+    settings,
+    navItems,
+    categories
+  } = useHome();
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("cartItems")
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        if (Array.isArray(parsed)) setCartItems(parsed)
-      }
-    } catch (e) {
-      console.warn("Failed to load cart from localStorage", e)
-    }
-  }, [])
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("cartItems", JSON.stringify(cartItems))
-    } catch (e) {
-      console.warn("Failed to save cart to localStorage", e)
-    }
-  }, [cartItems])
-
-  useEffect(() => {
-    if (!anchorElUser) return
-
-    const handlePointerDown = (event) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setAnchorElUser(null)
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown)
-    return () => document.removeEventListener("mousedown", handlePointerDown)
-  }, [anchorElUser])
-
-  const handleCloseUserMenu = () => setAnchorElUser(null)
-  const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget)
-
-  const handleClickUserMenu = async (e, action) => {
-    e.stopPropagation()
-    if (action === "logout") {
-      await logoutUser()
-      window.location.reload()
-    } else if (action === "settings") {
-      navigate("/settings")
-    }
-    setAnchorElUser(null)
-    setDrawerOpen(false)
-  }
-
-  const handleContactClick = () => alert("¡Se ha hecho clic en Contactar!")
-
-  const handleOpenCart = () => setCartOpen(true)
-  const handleCloseCart = () => setCartOpen(false)
-
-  const showToast = (message, severity = "success") => {
-    setToastMessage(message)
-    setToastSeverity(severity)
-    setToastOpen(true)
-  }
-
-  const handleCloseToast = (event, reason) => {
-    if (reason === 'clickaway') return
-    setToastOpen(false)
-  }
-
-  const handleAddToCart = (product) => {
-    const id = product._id || product.id
-    setCartItems((prev) => {
-      const exist = id ? prev.find((p) => (p._id || p.id) === id) : prev.find((p) => p.name === product.name)
-      if (exist) {
-        return prev.map((p) => ((p._id || p.id) === (exist._id || exist.id) || p.name === exist.name ? { ...p, qty: (p.qty || 1) + 1 } : p))
-      }
-      return [...prev, { ...product, qty: 1 }]
-    })
-    showToast("Se ha agregado con éxito", "success")
-  }
-
-  const handleDecrementFromProduct = (product) => {
-    const id = product._id || product.id
-    const exist = id ? cartItems.find((p) => (p._id || p.id) === id) : cartItems.find((p) => p.name === product.name)
-    if (!exist) return
-    if ((exist.qty || 1) > 1) {
-      handleUpdateQty(exist, (exist.qty || 1) - 1)
-      showToast("Se ha quitado 1 unidad del carrito", "warning")
-    } else {
-      handleRemoveFromCart(exist)
-      showToast("Se ha quitado del carrito", "warning")
-    }
-  }
-
-  const handleRemoveFromCart = (item) => {
-    const id = item._id || item.id
-    setCartItems((prev) => prev.filter((p) => id ? (p._id || p.id) !== id : p.name !== item.name))
-  }
-
-  const handleUpdateQty = (item, qty) => {
-    const id = item._id || item.id
-    setCartItems((prev) => prev.map((p) => (id ? ((p._id || p.id) === id ? { ...p, qty } : p) : (p.name === item.name ? { ...p, qty } : p))))
-  }
-
-  const getAvatarColor = (name) => {
-    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD"]
-    return colors[name.charCodeAt(0) % colors.length]
-  }
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category)
-    setCurrentPage(1)
-  }
-
-  const handleKeywordChange = (e) => setSearchKeyword(e.target.value)
-
-  const handleSearch = () => {
-    setSubmittedKeyword(searchKeyword)
-    setCurrentPage(1)
-    getProducts(searchKeyword)
-  }
-
-  const filteredProducts = selectedCategory === "all" ? products : products.filter((product) => product.category === selectedCategory)
-
-  const sortedProducts = [...filteredProducts].sort((a, b) => (a.name || "").localeCompare(b.name || ""))
-
-  const productsPerPage = 12
-  const totalPages = Math.ceil(sortedProducts.length / productsPerPage)
-  const displayProducts = sortedProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage)
-
-  if (!auth) return null
-
-  const settings = [
-    { label: "Settings", action: "settings" },
-    { label: "Logout", action: "logout" },
-  ]
-
-  const navItems = [
-    { href: "/create", label: "Vender productos" },
-    { href: "/contactanos", label: "Contáctanos" },
-    { href: "/ubicaciones", label: "Carrito", isCart: true },
-  ]
-
-  const categories = [
-    { value: "all", label: "Todos" },
-    { value: "electronics", label: "Electrónicos" },
-    { value: "clothes", label: "Ropa" },
-    { value: "vehicles", label: "Vehículos" },
-    { value: "medicina", label: "Medicina" },
-    { value: "comida", label: "Comida" },
-  ]
+  if (!auth) return null;
 
   const cartIcon = (
     <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -58,7 +58,7 @@ importers:
         version: 0.15.1
       connect-redis:
         specifier: ^8.0.1
-        version: 8.1.0(express-session@1.19.0)
+        version: 8.0.1(express-session@1.19.0)
       express-session:
         specifier: ^1.19.0
         version: 1.19.0
@@ -1637,8 +1637,8 @@ packages:
     resolution: {integrity: sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==}
     engines: {'0': node >= 6.0}
 
-  connect-redis@8.1.0:
-    resolution: {integrity: sha512-Km0EYLDlmExF52UCss5gLGTtrukGC57G6WCC2aqEMft5Vr4xNWuM4tL+T97kWrw+vp40SXFteb6Xk/7MxgpwdA==}
+  connect-redis@8.0.1:
+    resolution: {integrity: sha512-xxxxxx}
     engines: {node: '>=18'}
     peerDependencies:
       express-session: '>=1'
@@ -4389,27 +4389,22 @@ snapshots:
   '@redis/bloom@6.2.0(@redis/client@6.2.0)':
     dependencies:
       '@redis/client': 6.2.0
-    optional: true
 
   '@redis/client@6.2.0':
     dependencies:
       cluster-key-slot: 1.1.2
-    optional: true
 
   '@redis/json@6.2.0(@redis/client@6.2.0)':
     dependencies:
       '@redis/client': 6.2.0
-    optional: true
 
   '@redis/search@6.2.0(@redis/client@6.2.0)':
     dependencies:
       '@redis/client': 6.2.0
-    optional: true
 
   '@redis/time-series@6.2.0(@redis/client@6.2.0)':
     dependencies:
       '@redis/client': 6.2.0
-    optional: true
 
   '@sinclair/typebox@0.34.52': {}
 
@@ -5156,8 +5151,7 @@ snapshots:
 
   cluster-key-slot@1.1.1: {}
 
-  cluster-key-slot@1.1.2:
-    optional: true
+  cluster-key-slot@1.1.2: {}
 
   co@4.6.0: {}
 
@@ -5193,7 +5187,7 @@ snapshots:
       readable-stream: 3.6.2
       typedarray: 0.0.6
 
-  connect-redis@8.1.0(express-session@1.19.0):
+  connect-redis@8.0.1(express-session@1.19.0):
     dependencies:
       express-session: 1.19.0
 
@@ -6585,7 +6579,6 @@ snapshots:
     transitivePeerDependencies:
       - '@node-rs/xxhash'
       - '@opentelemetry/api'
-    optional: true
 
   reflect-metadata@0.2.2: {}
 
