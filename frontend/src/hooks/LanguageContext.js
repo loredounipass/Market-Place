@@ -4,6 +4,9 @@ import LanguagesService from '../services/languages';
 
 const LanguageContext = createContext();
 
+
+
+// PROVEEDOR DEL CONTEXTO DE IDIOMA
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState(() => {
         return localStorage.getItem('language') || 'es';
@@ -12,6 +15,10 @@ export const LanguageProvider = ({ children }) => {
     const initialLoadDone = useRef(false);
 
     useEffect(() => {
+
+
+
+        // OBTIENE EL IDIOMA DEL USUARIO DESDE EL SERVIDOR
         const fetchUserLang = async () => {
             try {
                 const res = await LanguagesService.getUserLanguage();
@@ -21,13 +28,16 @@ export const LanguageProvider = ({ children }) => {
                     setLanguage(serverLang);
                 }
             } catch {
-                // User not authenticated or endpoint unavailable, keep localStorage value
             }
         };
         fetchUserLang();
     }, []);
 
     useEffect(() => {
+
+
+
+        // CARGA LOS RECURSOS DEL IDIOMA SELECCIONADO
         const loadLanguage = async (lng) => {
             if (!initialLoadDone.current) {
                 setIsLoading(true);
@@ -48,12 +58,14 @@ export const LanguageProvider = ({ children }) => {
         loadLanguage(language);
     }, [language]);
 
+
+
+    // MANEJA EL CAMBIO DE IDIOMA DEL USUARIO
     const handleLanguageChange = useCallback((lng) => {
         setLanguage(lng);
         i18n.changeLanguage(lng);
         localStorage.setItem('language', lng);
         LanguagesService.updateUserLanguage(lng).catch(() => {
-            // silently fail if user is not authenticated
         });
     }, []);
 
@@ -64,4 +76,7 @@ export const LanguageProvider = ({ children }) => {
     );
 };
 
+
+
+// HOOK PARA UTILIZAR EL CONTEXTO DE IDIOMA
 export const useLanguage = () => use(LanguageContext);
