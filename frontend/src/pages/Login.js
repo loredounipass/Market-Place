@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import useAuth from "../hooks/useAuth"
+import { Link } from "react-router-dom"
+import useLogin from "../hooks/useLogin"
 
 const inputBase = "w-full px-4 py-3 text-sm bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 transition-all duration-200 focus:bg-white focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
 
@@ -27,53 +26,17 @@ function EyeIcon({ on }) {
 }
 
 export default function Login() {
-  const { loginUser, error } = useAuth()
-  const navigate = useNavigate()
-  const [openSnackbar, setOpenSnackbar] = useState(false)
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const isMounted = useRef(true)
-
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    const data = Object.fromEntries(new FormData(event.currentTarget))
-
-    localStorage.setItem("email", data.email)
-    setLoading(true)
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      const responseMessage = await loginUser(data)
-      if (isMounted.current) {
-        if (responseMessage && responseMessage.msg === "Código de verificación enviado a tu correo electrónico.") {
-          navigate("/verifytoken")
-        } else if (responseMessage && responseMessage.msg === "Logged in!") {
-          navigate("/")
-        } else {
-          setOpenSnackbar(true)
-        }
-      }
-    } catch (e) {
-      if (isMounted.current) {
-        setOpenSnackbar(true)
-      }
-    } finally {
-      if (isMounted.current) {
-        setLoading(false)
-      }
-    }
-  }
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false)
-  }
-
-  useEffect(() => {
-    return () => {
-      isMounted.current = false
-    }
-  }, [])
+  const {
+    error,
+    openSnackbar,
+    password,
+    setPassword,
+    showPassword,
+    setShowPassword,
+    loading,
+    handleSubmit,
+    handleCloseSnackbar
+  } = useLogin();
 
   return (
     <div className="h-screen bg-gray-100 overflow-hidden animate-fadeIn">

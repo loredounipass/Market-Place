@@ -6,6 +6,9 @@ export default function useProducts() {
     const [loading, setLoading] = useState(false); 
     const [error, setError] = useState(null);
 
+
+
+    // OBTIENE LOS PRODUCTOS DESDE EL SERVIDOR
     const getProducts = async (query = "") => {
         setLoading(true);
         try {
@@ -22,7 +25,9 @@ export default function useProducts() {
         }
     };
 
-    
+
+
+    // CREA UN NUEVO PRODUCTO
     const createProduct = async (productData) => {
         setLoading(true);
         try {
@@ -40,7 +45,9 @@ export default function useProducts() {
         }
     };
 
-   
+
+
+    // OBTIENE LOS PRODUCTOS AL MONTAR EL COMPONENTE
     useEffect(() => {
         getProducts();
     }, []);

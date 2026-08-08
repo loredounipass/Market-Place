@@ -1,31 +1,13 @@
-import React, { useEffect } from 'react';
-import { useLanguage } from '../../hooks/LanguageContext';
-import { useTranslation } from 'react-i18next';
-import i18n from '../../i18n';
+import React from 'react';
+import useLanguageSelectorComponent from '../../hooks/useLanguageSelectorComponent';
 
 function LanguageSelectorComponent() {
-    const { language, handleLanguageChange } = useLanguage();
-    const { t } = useTranslation();
-
-    const languageOptions = {
-        es: 'Español',
-        en: 'English',
-    };
-
-    useEffect(() => {
-        const savedLanguage = localStorage.getItem('language');
-        if (savedLanguage) {
-            handleLanguageChange(savedLanguage);
-            i18n.changeLanguage(savedLanguage);
-        }
-    }, [handleLanguageChange]);
-
-    const handleChange = (event) => {
-        const newLanguage = event.target.value;
-        handleLanguageChange(newLanguage);
-        i18n.changeLanguage(newLanguage);
-        localStorage.setItem('language', newLanguage);
-    };
+    const {
+        t,
+        language,
+        languageOptions,
+        handleChange
+    } = useLanguageSelectorComponent();
 
     return (
         <div className="mt-6 p-4 bg-white rounded shadow-lg shadow-black/5 max-w-xs mx-auto border border-gray-200">

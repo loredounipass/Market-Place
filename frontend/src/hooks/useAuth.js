@@ -8,6 +8,10 @@ export default function useAuth() {
     const { setAuth } = use(AuthContext);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+
+
+
+    // ESTABLECE EL CONTEXTO DEL USUARIO
     const setUserContext = async () => {
         try {
             const { data } = await User.getInfo();
@@ -22,6 +26,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // CIERRA LA SESIÓN DEL USUARIO
     const logoutUser = async () => {
         try {
             await User.logout();
@@ -32,6 +39,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // REGISTRA UN NUEVO USUARIO
     const registerUser = async (body) => {
         try {
             const { data } = await User.register(body);
@@ -45,6 +55,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // INICIA LA SESIÓN DEL USUARIO
     const loginUser = async (body) => {
         try {
             const { data } = await User.login(body);
@@ -64,6 +77,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // VERIFICA EL TOKEN DE AUTENTICACIÓN
     const verifyToken = async (body) => {
         try {
             const { data } = await User.verifyToken(body);
@@ -84,6 +100,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // REENVÍA EL TOKEN DE AUTENTICACIÓN
     const resendToken = async (body) => {
         try {
             const { data } = await User.resendToken(body);
@@ -100,6 +119,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // CAMBIA LA CONTRASEÑA DEL USUARIO
     const changePassword = async (body) => {
         try {
             const { data } = await User.changePassword(body);
@@ -123,6 +145,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // ACTUALIZA EL ESTADO DEL TOKEN
     const updateTokenStatus = async (body) => {
         try {
             const response = await User.updateTokenStatus(body);
@@ -139,6 +164,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // ACTUALIZA EL PERFIL DEL USUARIO
     const updateUserProfile = async (body) => {
         try {
             const { data } = await User.updateProfile(body);
@@ -162,6 +190,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // VERIFICA EL CORREO ELECTRÓNICO
     const verifyEmail = async (token) => {
         try {
             const { data } = await User.verifyEmail({ token });
@@ -178,6 +209,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // ENVÍA UN CORREO DE VERIFICACIÓN
     const sendVerificationEmail = async () => {
         try {
             const { data } = await User.sendVerificationEmail({});
@@ -194,6 +228,9 @@ export default function useAuth() {
         }
     };
 
+
+
+    // COMPRUEBA SI EL CORREO ESTÁ VERIFICADO
     const isEmailVerified = async () => {
         try {
             const { data } = await User.isEmailVerified();

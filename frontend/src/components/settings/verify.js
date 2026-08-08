@@ -1,51 +1,14 @@
-import React, { useContext, useState } from 'react';
-import { AuthContext } from '../../hooks/AuthContext';
-import User from '../../services/user';
+import React from 'react';
+import useEmailVerification from '../../hooks/useEmailVerification';
 
 const EmailVerificationComponent = () => {
-    const { auth } = useContext(AuthContext);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [dialogMessage, setDialogMessage] = useState('');
-    const [showCloseMessage, setShowCloseMessage] = useState(false);
-
-    const verifyEmail = async (email) => {
-        try {
-            const { data } = await User.verifyEmail({ email });
-            if (data && data.message === 'Correo electrónico verificado con éxito.') {
-                handleVerificationResult({ verified: true, message: `✔️ ${data.message}` });
-            } else {
-                handleVerificationResult({ verified: false, message: data.error || 'Error al verificar el correo electrónico.' });
-            }
-        } catch (err) {
-            handleVerificationResult({ verified: false, message: err.message });
-        }
-    };
-
-    const handleVerifyClick = () => {
-        if (auth && auth.email) {
-            verifyEmail(auth.email);
-        } else {
-            handleVerificationResult({ verified: false, message: 'No se encontró el correo electrónico autenticado.' });
-        }
-    };
-
-    const handleVerificationResult = (result) => {
-        setDialogMessage(result.message);
-        setOpenDialog(true);
-        setShowCloseMessage(false);
-
-        if (result.verified) {
-            setTimeout(() => {
-                setOpenDialog(false);
-                setShowCloseMessage(true);
-            }, 5000);
-        }
-    };
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-        setShowCloseMessage(true);
-    };
+    const {
+        openDialog,
+        dialogMessage,
+        showCloseMessage,
+        handleVerifyClick,
+        handleCloseDialog
+    } = useEmailVerification();
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6 text-center">

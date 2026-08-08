@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
 import { Link } from "react-router-dom"
-import useAuth from "../hooks/useAuth"
+import useRegister from "../hooks/useRegister"
 
 const inputBase = "w-full px-4 py-3 text-sm bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 transition-all duration-200 focus:bg-white focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10"
 
@@ -27,46 +26,22 @@ function EyeIcon({ on }) {
 }
 
 export default function Register() {
-  const { registerUser, error } = useAuth()
-  const isMounted = useRef(true)
-  const [openSnackbar, setOpenSnackbar] = useState(false)
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    if (password !== confirmPassword) {
-      setOpenSnackbar(true)
-      return
-    }
-
-    const data = Object.fromEntries(new FormData(event.currentTarget))
-    setLoading(true)
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      await registerUser(data)
-    } catch (e) {
-      if (isMounted.current) setOpenSnackbar(true)
-    } finally {
-      if (isMounted.current) setLoading(false)
-    }
-  }
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false)
-  }
-
-  useEffect(() => {
-    return () => {
-      isMounted.current = false
-    }
-  }, [])
-
-  const passwordsMatch = password === confirmPassword || confirmPassword === ""
+  const {
+    error,
+    openSnackbar,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
+    loading,
+    passwordsMatch,
+    handleSubmit,
+    handleCloseSnackbar
+  } = useRegister();
 
   return (
     <div className="h-screen bg-gray-100 overflow-hidden animate-fadeIn">

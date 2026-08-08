@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import useAuth from '../../hooks/useAuth';
+import React from 'react';
+import useChangePasswordComponent from '../../hooks/useChangePasswordComponent';
 
 const inputBase = "w-full pl-4 pr-12 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20";
 
@@ -16,42 +16,16 @@ function EyeIcon({ on }) {
 }
 
 function ChangePasswordComponent() {
-    const { changePassword, successMessage, error } = useAuth();
-
-    const [passwords, setPasswords] = useState({
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: ''
-    });
-
-    const [showPasswords, setShowPasswords] = useState({
-        currentPassword: false,
-        newPassword: false,
-        confirmNewPassword: false
-    });
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setPasswords(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleTogglePasswordVisibility = (field) => {
-        setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
-    };
-
-    const handleChangePassword = async () => {
-        if (passwords.newPassword !== passwords.confirmNewPassword) {
-            alert('Las nuevas contraseñas no coinciden.');
-            return;
-        }
-        await changePassword(passwords);
-    };
-
-    const labels = {
-        currentPassword: 'Contraseña Actual',
-        newPassword: 'Nueva Contraseña',
-        confirmNewPassword: 'Confirmar Contraseña'
-    };
+    const {
+        passwords,
+        showPasswords,
+        labels,
+        successMessage,
+        error,
+        handleChange,
+        handleTogglePasswordVisibility,
+        handleChangePassword
+    } = useChangePasswordComponent();
 
     return (
         <div className="flex flex-col">
